@@ -1,0 +1,70 @@
+<resources>
+    <string name="app_name">EmberIot</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_add">Add device</string>
+
+    <string name="menu_devices">Devices</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_logout">Logout</string>
+
+    <string name="btn_done">Done</string>
+    <string name="confirm_deletion">Confirm Deletion</string>
+    <string name="cancel">Cancel</string>
+
+    <!-- Strings related to login -->
+    <string name="login">Setup</string>
+    <string name="login_instructions_header">Getting Started with EmberIot</string>
+
+    <string name="login_instructions_app_1">To get started with EmberIot, make sure you\'ve created a
+        n app in your Firebase Console and enabled the Authentication and Realtime Database modules.
+        Once that\'s done, you can provide the necessary connection details. This can be done in
+        two ways: you can either upload a <b>google-services.json</b> file or type the information
+        manually on the next screen. Either way, you\'ll need to create an app in your Firebase Console.</string>
+
+    <string name="login_instructions_app_2_header">Create Your Firebase App Configuration</string>
+    <string name="login_instructions_app_3">Step 1: In the Firebase Console, navigate to Project Settings.</string>
+    <string name="login_instructions_app_4">Step 2: Under the General tab, click the Add App button and select the Android platform.</string>
+    <string name="login_instructions_app_5">Step 3: Set the package name to <b>com.emberiot.emberiot</b> and continue (you don\'t need to fill in the \"optional\" fields).</string>
+    <string name="login_instructions_app_6">Step 4: Download the <b>google-services.json</b> file provided after continuing.</string>
+    <string name="login_instructions_app_7">Step 5: Click the done button below, you will then need to upload the <b>google-services.json</b> file here.</string>
+
+    <string name="login_login_instructions_header">Great!</string>
+    <string name="login_login_instructions1">Your project is all set up! Now, you\'ll just need to
+        create a user in your Firebase Console, and that\'ll be the one used to sign into the app.
+        You can add as many users as you want and have them sign in on different devices too, if you\'d like.</string>
+    <string name="login_login_instructions2">Step 1: Go to the Firebase Authentication page within the console.</string>
+    <string name="login_login_instructions3">Step 2: Click the \"Add User\" button.</string>
+    <string name="login_login_instructions4">Step 3: Enter the new user\'s info and add the user.</string>
+    <string name="login_login_instructions5">Step 4: When that\'s done, click the \"Done\" button below.</string>
+
+    <string name="login_upload_label">Upload google-services.json</string>
+    <string name="login_upload_or">Or enter the information manually:</string>
+    <string name="login_manual">Submit Information Manually</string>
+    <string name="login_invalid_json">The selected JSON file is invalid.</string>
+    <string name="login_incomplete_json">The selected JSON file does not have the required fields.</string>
+    <string name="login_init_success">Firebase init successful.</string>
+
+    <string name="login_confirmation_title">Delete Firebase Config</string>
+    <string name="login_confirmation_message">Are you sure you want to go back to the configuration? All the Firebase settings and data will be deleted from this device.</string>
+
+    <string name="login_appid">Your Firebase APP ID</string>
+    <string name="login_webapikey">Your Firebase WebAPI key</string>
+    <string name="login_rtdb_url">Your Realtime Database URL</string>
+
+    <string name="login_email">Login Email</string>
+    <string name="login_pass">Login Password</string>
+    <string name="login_signin">Sign In</string>
+    <string name="login_invalid">Invalid email or password.</string>
+
+    <string name="login_back">Back to Config</string>
+
+    <!-- Preferences -->
+    <string name="notifications_header">Notifications</string>
+    <string name="developer_header">Developer Settings</string>
+    <string name="notifications_title">Enable notifications</string>
+    <string name="developer_mode">Developer mode</string>
+</resources>
