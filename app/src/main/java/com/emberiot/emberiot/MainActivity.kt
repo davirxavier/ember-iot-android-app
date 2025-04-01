@@ -6,7 +6,9 @@ import android.view.MenuItem
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -14,17 +16,36 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.emberiot.emberiot.databinding.ActivityMainBinding
+import com.emberiot.emberiot.devices.DeviceListFragment
+import com.emberiot.emberiot.devices.NewDeviceFragment
 import com.emberiot.emberiot.util.OnPrevCallback
 import com.emberiot.emberiot.view_model.LoginViewModel
 import com.google.android.material.navigation.NavigationView
+import com.maltaisn.icondialog.IconDialog
+import com.maltaisn.icondialog.data.Icon
+import com.maltaisn.icondialog.pack.IconPack
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), IconDialog.Callback {
+
+    override val iconDialogIconPack: IconPack?
+        get() = EmberIotApp.iconPack
+
+    override fun onIconDialogIconsSelected(dialog: IconDialog, icons: List<Icon>) {
+        supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main).let {
+            it?.childFragmentManager?.fragments?.get(0)?.let { frag ->
+                if (frag is NewDeviceFragment) {
+                    frag.onIconSelected(dialog, icons)
+                }
+            }
+        }
+    }
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private val loginViewModel: LoginViewModel by lazy {
         ViewModelProvider(this)[LoginViewModel::class.java]
     }
+    private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,7 +57,7 @@ class MainActivity : AppCompatActivity() {
 
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
+        navController = findNavController(R.id.nav_host_fragment_content_main)
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
@@ -46,6 +67,10 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        navController.addOnDestinationChangedListener { _, _, _ ->
+            invalidateOptionsMenu()
+        }
 
         navView.setNavigationItemSelectedListener { item ->
             val action = when(item.itemId) {
@@ -71,7 +96,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.main, menu)
+        val id = navController.currentDestination?.id
+        menuInflater.inflate(when(id) {
+            R.id.nav_devices -> R.menu.device_list
+            R.id.newDeviceFragment -> R.menu.new_device
+            else -> R.menu.no_actions
+        }, menu)
         return true
     }
 
@@ -91,8 +121,18 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_add) {
-
-            return true;
+            navController.navigate(R.id.newDeviceFragment)
+            return true
+        }
+        else if (item.itemId == R.id.action_save) {
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main).let {
+                it?.childFragmentManager?.fragments?.get(0)?.let { frag ->
+                    if (frag is NewDeviceFragment) {
+                        frag.onSave()
+                    }
+                }
+            }
+            return true
         }
         else {
             return super.onOptionsItemSelected(item)

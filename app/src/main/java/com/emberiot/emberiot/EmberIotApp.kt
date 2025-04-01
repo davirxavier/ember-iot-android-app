@@ -10,6 +10,9 @@ import androidx.security.crypto.MasterKeys
 import com.emberiot.emberiot.view_model.LoginViewModel
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
+import com.maltaisn.icondialog.pack.IconPack
+import com.maltaisn.icondialog.pack.IconPackLoader
+import com.maltaisn.iconpack.defaultpack.createDefaultIconPack
 
 class EmberIotApp : Application() {
 
@@ -26,9 +29,23 @@ class EmberIotApp : Application() {
         )
 
         app = this
+        loadIconPack()
+    }
+
+    private fun loadIconPack() {
+        // Create an icon pack loader with application context.
+        val loader = IconPackLoader(this)
+
+        // Create an icon pack and load all drawables.
+        val iconPack = createDefaultIconPack(loader)
+        iconPack.loadDrawables(loader.drawableLoader)
+
+        EmberIotApp.iconPack = iconPack
     }
 
     companion object {
+        var iconPack: IconPack? = null
+
         var encryptedSharedPreferences: SharedPreferences? = null
             private set
 

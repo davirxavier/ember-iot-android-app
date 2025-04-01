@@ -20,6 +20,9 @@ security_crypto = "1.0.0"
 firebaseAuth = "23.2.0"
 firebaseDatabase = "21.0.0"
 preference = "1.2.1"
+materialVersion = "1.12.0"
+icondialog = "3.3.0"
+iconpackDefault = "1.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -41,6 +44,9 @@ androidx_security_crypto = { module = "androidx.security:security-crypto", versi
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
 firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
 androidx-preference = { group = "androidx.preference", name = "preference", version.ref = "preference" }
+google-material = { group = "com.google.android.material", name = "material", version.ref = "materialVersion" }
+icondialog = { group = "com.maltaisn", name = "icondialog", version.ref = "icondialog" }
+iconpack-default = { group = "com.maltaisn", name = "iconpack-default", version.ref = "iconpackDefault" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

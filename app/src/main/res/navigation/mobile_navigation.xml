@@ -33,6 +33,9 @@
             app:popUpToInclusive="true"
             app:popUpTo="@id/nav_devices"
             app:destination="@id/nav_devices" />
+        <action
+            android:id="@+id/action_nav_devices_to_newDeviceFragment"
+            app:destination="@id/newDeviceFragment" />
     </fragment>
 
     <fragment
@@ -51,4 +54,8 @@
             app:popUpToInclusive="true"
             app:destination="@id/nav_settings" />
     </fragment>
+    <fragment
+        android:id="@+id/newDeviceFragment"
+        android:name="com.emberiot.emberiot.devices.NewDeviceFragment"
+        android:label="@string/new_device" />
 </navigation>

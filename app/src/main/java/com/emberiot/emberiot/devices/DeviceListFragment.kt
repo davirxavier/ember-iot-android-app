@@ -2,10 +2,15 @@ package com.emberiot.emberiot.devices
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import com.emberiot.emberiot.R
 import com.emberiot.emberiot.databinding.FragmentDeviceListBinding
 import com.emberiot.emberiot.view_model.DeviceViewModel
 import com.emberiot.emberiot.view_model.LoginViewModel
@@ -13,6 +18,7 @@ import com.emberiot.emberiot.view_model.LoginViewModel
 class DeviceListFragment : Fragment() {
 
     private lateinit var binding: FragmentDeviceListBinding
+    private lateinit var adapter: DeviceListAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -21,7 +27,7 @@ class DeviceListFragment : Fragment() {
     ): View {
         binding = FragmentDeviceListBinding.inflate(inflater)
 
-        val adapter = DeviceListAdapter(requireContext())
+        adapter = DeviceListAdapter(requireContext())
         binding.list.adapter = adapter
 
         val loginViewModel = ViewModelProvider(requireActivity())[LoginViewModel::class.java]
@@ -34,5 +40,14 @@ class DeviceListFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        if (adapter.contextMenuCurrentId == null)
+            return super.onContextItemSelected(item)
+
+        findNavController().navigate(R.id.newDeviceFragment, bundleOf(NewDeviceFragment.DEVICE_PARAM to adapter.contextMenuCurrentId!!))
+
+        return super.onContextItemSelected(item)
     }
 }

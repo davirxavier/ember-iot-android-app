@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.emberiot.emberiot.EmberIotApp
 import com.emberiot.emberiot.R
@@ -104,7 +105,9 @@ class LoginFragment : Fragment(), OnPrevCallback {
     }
 
     private fun redirectHome() {
-        findNavController().navigate(R.id.action_nav_login_to_nav_devices)
+        findNavController().navigate(R.id.nav_devices, null, NavOptions.Builder().apply {
+            setPopUpTo(R.id.nav_login, true)
+        }.build())
     }
 
     private fun onDeleteApp() {
