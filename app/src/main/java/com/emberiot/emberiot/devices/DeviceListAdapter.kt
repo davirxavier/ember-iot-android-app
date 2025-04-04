@@ -18,7 +18,8 @@ import com.emberiot.emberiot.data.Device
 import com.emberiot.emberiot.databinding.FragmentDeviceBinding
 
 class DeviceListAdapter(
-    private val context: Context
+    private val context: Context,
+    private val itemClickedCallback: (d: Device) -> Unit
 ) : ListAdapter<Device, DeviceListAdapter.ViewHolder>(DeviceDiffCallback()) {
 
     var contextMenuCurrentId: String? = null
@@ -58,6 +59,10 @@ class DeviceListAdapter(
 
         val color = ContextCompat.getColor(context, if (item.isOnline()) R.color.green else R.color.gray)
         holder.statusIndicator.backgroundTintList = ColorStateList.valueOf(color)
+
+        holder.itemView.setOnClickListener {
+            itemClickedCallback.invoke(item)
+        }
 
         holder.itemView.setOnLongClickListener {
             contextMenuCurrentId = item.id

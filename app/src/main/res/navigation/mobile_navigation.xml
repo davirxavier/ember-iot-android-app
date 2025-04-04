@@ -58,4 +58,8 @@
         android:id="@+id/newDeviceFragment"
         android:name="com.emberiot.emberiot.devices.NewDeviceFragment"
         android:label="@string/new_device" />
+    <fragment
+        android:id="@+id/viewDeviceFragment"
+        android:name="com.emberiot.emberiot.device_view.DeviceViewFragment"
+        android:label="@string/device_name" />
 </navigation>

@@ -94,4 +94,6 @@
     <string name="device_invalid_name">The device requires a name.</string>
 
     <string name="device_context_menu">Device</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
