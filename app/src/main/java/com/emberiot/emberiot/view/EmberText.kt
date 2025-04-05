@@ -11,4 +11,8 @@ class EmberText(context: Context) : AppCompatTextView(context), EmberUiClass {
     override fun onChannelUpdate(newValue: String) {
         TODO("Not yet implemented")
     }
+
+    override fun setOnChannelChangeListener(fn: UpdateChannelFn) {
+        TODO("Not yet implemented")
+    }
 }

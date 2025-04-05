@@ -65,6 +65,12 @@ class DeviceViewModel(private val loginViewModel: LoginViewModel,
         }
     }
 
+    suspend fun updateChannel(deviceId: String, channelId: String, newValue: String) {
+        devices.query?.ref?.child(deviceId)?.child("properties")?.updateChildren(
+            mapOf(channelId to newValue)
+        )?.await()
+    }
+
     class DeviceViewModelFactory(
         private val loginViewModel: LoginViewModel,
         private val lifecycleOwner: LifecycleOwner
