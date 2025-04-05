@@ -13,10 +13,11 @@ import androidx.navigation.fragment.findNavController
 import com.emberiot.emberiot.R
 import com.emberiot.emberiot.databinding.FragmentDeviceListBinding
 import com.emberiot.emberiot.device_view.DeviceViewFragment
+import com.emberiot.emberiot.util.OnActionClick
 import com.emberiot.emberiot.view_model.DeviceViewModel
 import com.emberiot.emberiot.view_model.LoginViewModel
 
-class DeviceListFragment : Fragment() {
+class DeviceListFragment : Fragment(), OnActionClick {
 
     private lateinit var binding: FragmentDeviceListBinding
     private lateinit var adapter: DeviceListAdapter
@@ -48,12 +49,13 @@ class DeviceListFragment : Fragment() {
         return binding.root
     }
 
-    override fun onContextItemSelected(item: MenuItem): Boolean {
-        if (adapter.contextMenuCurrentId == null)
-            return super.onContextItemSelected(item)
-
-        findNavController().navigate(R.id.newDeviceFragment, bundleOf(NewDeviceFragment.DEVICE_PARAM to adapter.contextMenuCurrentId!!))
-
-        return super.onContextItemSelected(item)
+    override fun onActionClick(actionId: Int): Boolean {
+        if (actionId == R.id.action_add) {
+            findNavController().navigate(R.id.newDeviceFragment)
+            return true
+        }
+        else {
+            return false
+        }
     }
 }

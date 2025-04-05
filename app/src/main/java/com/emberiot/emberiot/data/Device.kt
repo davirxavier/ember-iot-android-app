@@ -9,7 +9,7 @@ data class Device(
     var iconId: Int = 0,
     val properties: MutableMap<String, String?> = mutableMapOf(),
     val propertyDefinitions: MutableMap<String, DevicePropertyDefinition?> = mutableMapOf(),
-    val uiObjects: List<DeviceUiObject> = mutableListOf()
+    val uiObjects: MutableList<DeviceUiObject> = mutableListOf()
 ) {
     fun isOnline(): Boolean {
         return if (lastSeen < 0) false else System.currentTimeMillis() - lastSeen < Values.OFFLINE_THRESHOLD

@@ -4,7 +4,9 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.emberiot.emberiot.data.Device
+import com.emberiot.emberiot.data.DeviceUiObject
 import com.emberiot.emberiot.data.builders.DeviceListBuilder
+import com.emberiot.emberiot.data.enum.UiObjectType
 import com.emberiot.emberiot.util.FirebaseLiveData
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.tasks.await
@@ -42,6 +44,24 @@ class DeviceViewModel(private val loginViewModel: LoginViewModel,
             if (device.id == null) {
                 device.id = newPath.key
             }
+        }
+    }
+
+    suspend fun updateDeviceUi(deviceId: String, objects: List<DeviceUiObject>) {
+        devices.query?.ref?.child(deviceId)?.child("ui_objects")?.let { path ->
+            val map = mutableMapOf<String, Any>()
+
+            objects.forEachIndexed { i, o ->
+                map.put(i.toString(), mapOf(
+                    "type" to o.type.name,
+                    "prop_id" to o.propDef?.id,
+                    "h_pos" to o.horizontalPosition,
+                    "v_pos" to o.verticalPosition,
+                    "params" to o.parameters
+                ))
+            }
+
+            path.updateChildren(map).await()
         }
     }
 
