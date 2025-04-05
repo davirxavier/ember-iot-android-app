@@ -120,8 +120,10 @@ class DeviceViewFragment : Fragment(), OnActionClick {
     }
 
     private val updateChannelFn: DeviceViewChannelUpdateCallback = { channel, newVal ->
-        viewLifecycleOwner.lifecycleScope.launch {
-            device.id?.let { deviceViewModel.updateChannel(it, channel, newVal) }
+        if (!editMode) {
+            viewLifecycleOwner.lifecycleScope.launch {
+                device.id?.let { deviceViewModel.updateChannel(it, channel, newVal) }
+            }
         }
     }
 
