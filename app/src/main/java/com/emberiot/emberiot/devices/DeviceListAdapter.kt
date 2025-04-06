@@ -3,6 +3,7 @@ package com.emberiot.emberiot.devices
 import android.content.Context
 import android.content.res.ColorStateList
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -71,7 +72,8 @@ class DeviceListAdapter(
         
         holder.itemView.setOnCreateContextMenuListener { menu, v, menuInfo ->
             menu.setHeaderTitle(R.string.device_context_menu)
-            menu.add(R.string.edit_device)
+            menu.add(Menu.NONE, 0, Menu.NONE, R.string.edit_device)
+            menu.add(Menu.NONE, 1, Menu.NONE, R.string.delete_device)
         }
     }
 

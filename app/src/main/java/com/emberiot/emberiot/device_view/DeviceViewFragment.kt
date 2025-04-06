@@ -218,9 +218,8 @@ class DeviceViewFragment : Fragment(), OnActionClick {
         AlertDialog.Builder(requireContext()).apply {
             setTitle(R.string.edit_device_ui_confirmation_title)
             setMessage(bodyText)
-            setNegativeButton(R.string.cancel) { d, _ -> d.dismiss() }
+            setNegativeButton(R.string.cancel) { d, _ -> }
             setPositiveButton(R.string.confirm) { d, _ ->
-                d.dismiss()
                 cb(d)
             }
         }.create().show()
