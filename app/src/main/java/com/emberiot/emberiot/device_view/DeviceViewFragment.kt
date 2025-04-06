@@ -2,6 +2,7 @@ package com.emberiot.emberiot.device_view
 
 import android.content.DialogInterface
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -27,10 +28,12 @@ import com.emberiot.emberiot.databinding.FragmentDeviceViewBinding
 import com.emberiot.emberiot.util.DeviceViewChannelUpdateCallback
 import com.emberiot.emberiot.util.DeviceViewUtil
 import com.emberiot.emberiot.util.OnActionClick
+import com.emberiot.emberiot.util.OpenUiConfigFn
 import com.emberiot.emberiot.util.UiUtils
 import com.emberiot.emberiot.view.UpdateChannelFn
 import com.emberiot.emberiot.view_model.DeviceViewModel
 import com.emberiot.emberiot.view_model.LoginViewModel
+import com.emberiot.emberiot.view_model.UiElementConfigViewModel
 import kotlinx.coroutines.launch
 
 class DeviceViewFragment : Fragment(), OnActionClick {
@@ -118,12 +121,23 @@ class DeviceViewFragment : Fragment(), OnActionClick {
             DeviceViewModel.DeviceViewModelFactory(loginViewModel, viewLifecycleOwner)
         )[DeviceViewModel::class.java]
     }
+    private val uiElementConfigViewModel by lazy {
+        ViewModelProvider(requireActivity())[UiElementConfigViewModel::class.java]
+    }
 
     private val updateChannelFn: DeviceViewChannelUpdateCallback = { channel, newVal ->
         if (!editMode) {
             viewLifecycleOwner.lifecycleScope.launch {
                 device.id?.let { deviceViewModel.updateChannel(it, channel, newVal) }
             }
+        }
+    }
+
+    private val openObjectConfigFn: OpenUiConfigFn = { obj ->
+        if (editMode) {
+            uiElementConfigViewModel.currentDevice = device
+            uiElementConfigViewModel.currentlyEdited = obj
+            findNavController().navigate(R.id.uiObjectConfigFragment)
         }
     }
 
@@ -145,38 +159,43 @@ class DeviceViewFragment : Fragment(), OnActionClick {
             if (initDone && editMode) {
                 return@observe
             }
-
-            val d = devices.find { it.id == deviceId } ?: return@observe
-
-            if (d.uiObjects != lastUiObjects) {
-                initDone = false
-            }
-
-            if (!initDone) {
-                channelUpdateCallback = deviceViewUtil.init(binding.viewLayout, d, editMode, updateChannelFn)
-                initDone = true
-                device = d
-                (requireActivity() as? AppCompatActivity)?.supportActionBar?.title = d.name
-                lastUiObjects = d.uiObjects
-            }
-
-            if (channelUpdateCallback == null) {
-                return@observe
-            }
-
-            d.properties.forEach { (channel, value) ->
-                if (value != null) {
-                    channelUpdateCallback?.invoke(channel, value)
-                }
-            }
+            init(devices.find { it.id == deviceId } ?: return@observe)
         }
 
         return binding.root
     }
 
+    private fun init(d: Device) {
+        if (d.uiObjects != lastUiObjects) {
+            initDone = false
+        }
+
+        if (!initDone) {
+            initDone = true
+            device = d
+            updateLayout()
+            (requireActivity() as? AppCompatActivity)?.supportActionBar?.title = d.name
+            lastUiObjects = d.uiObjects
+        }
+
+        if (channelUpdateCallback == null) {
+            return
+        }
+
+        d.properties.forEach { (channel, value) ->
+            if (value != null) {
+                channelUpdateCallback?.invoke(channel, value)
+            }
+        }
+    }
+
+    private fun updateLayout() {
+        channelUpdateCallback = deviceViewUtil.init(binding.viewLayout, device, editMode, updateChannelFn, openObjectConfigFn)
+    }
+
     private fun onEditClick() {
         editMode = true
-        channelUpdateCallback = deviceViewUtil.init(binding.viewLayout, device, editMode, updateChannelFn)
+        updateLayout()
         requireActivity().invalidateOptionsMenu()
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
@@ -234,7 +253,7 @@ class DeviceViewFragment : Fragment(), OnActionClick {
                     )
                 )
 
-                channelUpdateCallback = deviceViewUtil.init(binding.viewLayout, device, editMode, updateChannelFn)
+                updateLayout()
             }
 
             show()
@@ -253,5 +272,11 @@ class DeviceViewFragment : Fragment(), OnActionClick {
         return true
     }
 
-
+    override fun onResume() {
+        super.onResume()
+        if (initDone) {
+            initDone = false
+            init(device)
+        }
+    }
 }

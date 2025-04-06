@@ -10,12 +10,16 @@ import android.util.TypedValue
 import androidx.core.content.ContextCompat
 import com.emberiot.emberiot.EmberIotApp
 import com.emberiot.emberiot.R
+import com.emberiot.emberiot.data.enum.EmberButtonStyle
+import com.emberiot.emberiot.data.enum.EmberButtonType
+import com.emberiot.emberiot.data.enum.EnumFromValue
+import com.emberiot.emberiot.data.enum.LabelSize
 import com.emberiot.emberiot.util.UiUtils
 import com.google.android.material.button.MaterialButton
 
 class EmberButton(context: Context) : MaterialButton(context), EmberUiClass {
     companion object {
-        const val IS_PUSH = "ip"
+        const val TYPE = "t"
         const val TEXT_ON = "to"
         const val TEXT_OFF = "tf"
         const val ICON = "i"
@@ -24,38 +28,26 @@ class EmberButton(context: Context) : MaterialButton(context), EmberUiClass {
         const val ON_VAL = 1
         const val OFF_VAL = 0
         const val PUSH_VAL = 2
-
-        enum class Style(val value: String) {
-            CIRCLE("c"), ROUND("r"), SQUARE("s");
-
-            companion object {
-                fun fromValue(v: String?): Style? {
-                    return Style.entries.find { it.value == v }
-                }
-            }
-        }
     }
 
-    private val handler = Handler(Looper.getMainLooper())
     private var updateChannel: UpdateChannelFn? = null
     private var isToggled = false
-    private var style: Style = Style.ROUND
-    private var size = 1
+    private var style: EmberButtonStyle = EmberButtonStyle.ROUND
+    private var size = LabelSize.SMALL
     private var textOn = ""
     private var textOff = ""
-    private var isPush = false
+    private var type = EmberButtonType.TOGGLE
     private var pushStarted = false
 
     override fun parseParams(params: Map<String, String>) {
         textOn = params[TEXT_ON] ?: ""
         textOff = params[TEXT_OFF] ?: ""
-        isPush = params.containsKey(IS_PUSH)
-        style = Style.fromValue(params[STYLE]) ?: Style.ROUND
+        type = EnumFromValue.fromValue(params[TYPE], EmberButtonType::class.java) ?: EmberButtonType.TOGGLE
+        style = EnumFromValue.fromValue(params[STYLE], EmberButtonStyle::class.java) ?: EmberButtonStyle.ROUND
 
-        val paramSize = params[EmberText.SIZE]?.toInt() ?: 1
-        size = paramSize
-        val newSize = EmberText.adjustSize(size, this)
-        iconSize = (newSize * 1.5).toInt()
+        size = EnumFromValue.fromValue(params[EmberText.SIZE], LabelSize::class.java) ?: LabelSize.SMALL
+        EmberText.adjustSize(size, this)
+        iconSize = (size.size * 1.5).toInt()
 
         params[ICON]?.let {
             EmberIotApp.iconPack?.getIcon(it.toInt())?.drawable?.let { d -> icon = d }
@@ -69,7 +61,7 @@ class EmberButton(context: Context) : MaterialButton(context), EmberUiClass {
 
         updateStyle()
         setOnClickListener {
-            if (isPush) {
+            if (type == EmberButtonType.PUSH) {
                 if (pushStarted) {
                     return@setOnClickListener
                 }
@@ -108,23 +100,20 @@ class EmberButton(context: Context) : MaterialButton(context), EmberUiClass {
         )
 
         when (style) {
-            Style.ROUND -> {
+            EmberButtonStyle.ROUND -> {
                 border.shape = GradientDrawable.RECTANGLE
                 border.cornerRadius = UiUtils.dpToPx(64f, resources)
             }
 
-            Style.CIRCLE -> {
+            EmberButtonStyle.CIRCLE -> {
                 setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
                 border.shape = GradientDrawable.OVAL
                 val layoutParams = layoutParams
                 layoutParams.width = UiUtils.dpToPx(
                     when (size) {
-                        1 -> 82f
-                        2 -> 96f
-                        3 -> 110f
-                        4 -> 130f
-                        5 -> 150f
-                        else -> 150f
+                        LabelSize.SMALL -> 82f
+                        LabelSize.MEDIUM -> 96f
+                        else -> 110f
                     }, resources
                 ).toInt()
                 layoutParams.height = layoutParams.width
@@ -132,7 +121,7 @@ class EmberButton(context: Context) : MaterialButton(context), EmberUiClass {
                 setPadding(0, 0, 0, 0)
             }
 
-            Style.SQUARE -> {
+            EmberButtonStyle.SQUARE -> {
                 border.setShape(GradientDrawable.RECTANGLE)
                 border.cornerRadius = UiUtils.dpToPx(4f, resources)
             }

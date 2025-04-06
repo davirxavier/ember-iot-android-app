@@ -2,6 +2,7 @@ package com.emberiot.emberiot.util
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
@@ -13,7 +14,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toDrawable
 import com.emberiot.emberiot.R
 import com.emberiot.emberiot.data.Device
-import com.emberiot.emberiot.data.enum.LabelAlignment
+import com.emberiot.emberiot.data.DeviceUiObject
+import com.emberiot.emberiot.data.enum.EnumFromValue
+import com.emberiot.emberiot.data.enum.LabelType
 import com.emberiot.emberiot.data.enum.UiObjectType
 import com.emberiot.emberiot.view.DottedGridView
 import com.emberiot.emberiot.view.EmberButton
@@ -23,11 +26,13 @@ import kotlin.math.abs
 import kotlin.math.roundToInt
 
 typealias DeviceViewChannelUpdateCallback = (channel: String, value: String) -> Unit
+typealias OpenUiConfigFn = (obj: DeviceUiObject) -> Unit
 
-class DeviceViewUtil() {
+class DeviceViewUtil {
 
     companion object {
         const val LABEL_PARAM = "label"
+        const val LABEL_TYPE_PARAM = "labelt"
         const val DOTTED_LINE_SIZE = 2
 
         fun getClass(context: Context, type: UiObjectType): View? {
@@ -36,6 +41,72 @@ class DeviceViewUtil() {
                 UiObjectType.TEXT -> EmberText(context)
                 else -> null
             }
+        }
+
+        fun createLabel(label: String, type: LabelType, layout: ConstraintLayout, obj: View) {
+            if (type == LabelType.NONE) {
+                return
+            }
+
+            val labelObj = TextView(layout.context)
+            labelObj.id = View.generateViewId()
+
+            labelObj.text = label
+
+            labelObj.layoutParams = ConstraintLayout.LayoutParams(
+                ConstraintLayout.LayoutParams.WRAP_CONTENT,
+                ConstraintLayout.LayoutParams.WRAP_CONTENT
+            )
+
+            (labelObj.layoutParams as? ConstraintLayout.LayoutParams)?.let {
+                if (type.isTop()) {
+                    it.bottomMargin = TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_DIP,
+                        4f,
+                        layout.context.resources.displayMetrics
+                    ).toInt()
+                    it.bottomToTop = obj.id
+                } else {
+                    it.topMargin = TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_DIP,
+                        4f,
+                        layout.context.resources.displayMetrics
+                    ).toInt()
+                    it.topToBottom = obj.id
+                }
+
+                when (type) {
+                    LabelType.TOP_START -> {
+                        it.startToStart = obj.id
+                    }
+
+                    LabelType.TOP_CENTER -> {
+                        it.startToStart = obj.id
+                        it.endToEnd = obj.id
+                    }
+
+                    LabelType.TOP_END -> {
+                        it.endToEnd = obj.id
+                    }
+
+                    LabelType.BOTTOM_START -> {
+                        it.startToStart = obj.id
+                    }
+
+                    LabelType.BOTTOM_CENTER -> {
+                        it.startToStart = obj.id
+                        it.endToEnd = obj.id
+                    }
+
+                    LabelType.BOTTOM_END -> {
+                        it.endToEnd = obj.id
+                    }
+
+                    else -> {}
+                }
+            }
+
+            layout.addView(labelObj)
         }
     }
 
@@ -49,10 +120,12 @@ class DeviceViewUtil() {
         layout: ConstraintLayout,
         device: Device,
         editMode: Boolean = false,
-        updateChannelFn: DeviceViewChannelUpdateCallback
+        updateChannelFn: DeviceViewChannelUpdateCallback,
+        openObjectConfigFn: OpenUiConfigFn,
     ): DeviceViewChannelUpdateCallback {
         layout.removeAllViews()
 
+        var downTime: Long = -1
         var snapHighlight: View? = null
         var dragging: View? = null
         val constraint = ConstraintSet()
@@ -134,123 +207,85 @@ class DeviceViewUtil() {
             (obj as? EmberUiClass)?.apply { parseParams(o.parameters) }
 
             layout.addView(obj)
-
-            o.parameters[LABEL_PARAM]?.let { label ->
-                if (label.length < 3) {
-                    return@let
-                }
-
-                val alignment =
-                    LabelAlignment.fromValue(label[0].toString()) ?: LabelAlignment.CENTER
-                val position = LabelAlignment.fromValue(label[1].toString()) ?: LabelAlignment.TOP
-                val labelText = label.substring(2)
-
-                val labelObj = TextView(layout.context)
-                labelObj.id = View.generateViewId()
-
-                labelObj.text = labelText
-
-                labelObj.layoutParams = ConstraintLayout.LayoutParams(
-                    ConstraintLayout.LayoutParams.WRAP_CONTENT,
-                    ConstraintLayout.LayoutParams.WRAP_CONTENT
-                )
-
-                (labelObj.layoutParams as? ConstraintLayout.LayoutParams)?.let {
-                    if (position == LabelAlignment.BOTTOM) {
-                        it.topMargin = TypedValue.applyDimension(
-                            TypedValue.COMPLEX_UNIT_DIP,
-                            4f,
-                            layout.context.resources.displayMetrics
-                        ).toInt()
-                        it.topToBottom = obj.id
-                    } else if (position == LabelAlignment.TOP) {
-                        it.bottomMargin = TypedValue.applyDimension(
-                            TypedValue.COMPLEX_UNIT_DIP,
-                            4f,
-                            layout.context.resources.displayMetrics
-                        ).toInt()
-                        it.bottomToTop = obj.id
-                    }
-
-                    when (alignment) {
-                        LabelAlignment.CENTER -> {
-                            it.startToStart = obj.id
-                            it.endToEnd = obj.id
-                        }
-
-                        LabelAlignment.START -> {
-                            it.startToStart = obj.id
-                        }
-
-                        LabelAlignment.END -> {
-                            it.endToEnd = obj.id
-                        }
-
-                        else -> {}
-                    }
-                }
-
-                layout.addView(labelObj)
+            o.parameters[LABEL_PARAM]?.let {
+                createLabel(it, EnumFromValue.fromValue(o.parameters[LABEL_TYPE_PARAM], LabelType::class.java) ?: LabelType.NONE, layout, obj)
             }
 
             if (editMode) {
                 obj.setOnTouchListener { _, event ->
+                    Log.println(Log.INFO, "", "$event")
                     when (event.action) {
                         MotionEvent.ACTION_DOWN -> {
-                            if (dragging != null) {
-                                return@setOnTouchListener false
-                            }
-
-                            dragging = obj
-                            obj.bringToFront()
-                            obj.alpha = 0.7f
-
-                            snapHighlight = View(layout.context).apply {
-                                layoutParams = ConstraintLayout.LayoutParams(
-                                    obj.width,
-                                    obj.height
-                                ).apply {
-                                    startToStart = ConstraintLayout.LayoutParams.PARENT_ID
-                                    endToEnd = ConstraintLayout.LayoutParams.PARENT_ID
-                                    topToTop = ConstraintLayout.LayoutParams.PARENT_ID
-                                    bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID
-                                    id = View.generateViewId()
-                                }
-                                setBackgroundColor(ContextCompat.getColor(layout.context, R.color.green))
-                            }
-                            layout.addView(snapHighlight)
+                            downTime = System.currentTimeMillis()
+                            return@setOnTouchListener true
                         }
 
                         MotionEvent.ACTION_MOVE -> {
-                            val id = snapHighlight?.id ?: return@setOnTouchListener false
-                            val idView = dragging?.id ?: return@setOnTouchListener false
-                            val biases = computeBiasFromTouch(event.rawX, event.rawY, layout)
+                            val isTimeoutOver = System.currentTimeMillis() - downTime >= 600
 
-                            val nearCenterX = abs(biases.first - 0.5f) < 0.03
-                            val nearCenterY = abs(biases.second - 0.5f) < 0.03
+                            if (dragging == null && isTimeoutOver) {
+                                dragging = obj
+                                obj.bringToFront()
+                                obj.alpha = 0.7f
 
-                            verticalGuide.visibility = if (nearCenterX) View.VISIBLE else View.GONE
-                            horizontalGuide.visibility =
-                                if (nearCenterY) View.VISIBLE else View.GONE
+                                snapHighlight = View(layout.context).apply {
+                                    layoutParams = ConstraintLayout.LayoutParams(
+                                        obj.width,
+                                        obj.height
+                                    ).apply {
+                                        startToStart = ConstraintLayout.LayoutParams.PARENT_ID
+                                        endToEnd = ConstraintLayout.LayoutParams.PARENT_ID
+                                        topToTop = ConstraintLayout.LayoutParams.PARENT_ID
+                                        bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID
+                                        id = View.generateViewId()
+                                    }
+                                    setBackgroundColor(
+                                        ContextCompat.getColor(
+                                            layout.context,
+                                            R.color.green
+                                        )
+                                    )
+                                }
+                                layout.addView(snapHighlight)
+                            }
 
-                            val finalHBias = if (nearCenterX) 0.5f else biases.first
-                            val finalVBias = if (nearCenterY) 0.5f else biases.second
+                            if (dragging != null && isTimeoutOver) {
+                                val id = snapHighlight?.id ?: return@setOnTouchListener false
+                                val idView = dragging?.id ?: return@setOnTouchListener false
+                                val biases = computeBiasFromTouch(event.rawX, event.rawY, layout)
 
-                            constraint.clone(layout)
-                            constraint.setHorizontalBias(id, finalHBias)
-                            constraint.setVerticalBias(id, finalVBias)
-                            constraint.applyTo(layout)
+                                val nearCenterX = abs(biases.first - 0.5f) < 0.03
+                                val nearCenterY = abs(biases.second - 0.5f) < 0.03
 
-                            constraint.clone(layout)
-                            constraint.setHorizontalBias(idView, finalHBias)
-                            constraint.setVerticalBias(idView, finalVBias)
-                            constraint.applyTo(layout)
+                                verticalGuide.visibility =
+                                    if (nearCenterX) View.VISIBLE else View.GONE
+                                horizontalGuide.visibility =
+                                    if (nearCenterY) View.VISIBLE else View.GONE
 
-                            wasNearXCenter = nearCenterX
-                            wasNearYCenter = nearCenterY
+                                val finalHBias = if (nearCenterX) 0.5f else biases.first
+                                val finalVBias = if (nearCenterY) 0.5f else biases.second
+
+                                constraint.clone(layout)
+                                constraint.setHorizontalBias(id, finalHBias)
+                                constraint.setVerticalBias(id, finalVBias)
+                                constraint.applyTo(layout)
+
+                                constraint.clone(layout)
+                                constraint.setHorizontalBias(idView, finalHBias)
+                                constraint.setVerticalBias(idView, finalVBias)
+                                constraint.applyTo(layout)
+
+                                wasNearXCenter = nearCenterX
+                                wasNearYCenter = nearCenterY
+                            }
                         }
 
                         MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                            if (dragging == null && System.currentTimeMillis() - downTime < 600) {
+                                openObjectConfigFn(o)
+                                return@setOnTouchListener true
+                            }
+
                             if (dragging == null) return@setOnTouchListener false
 
                             (dragging?.layoutParams as? ConstraintLayout.LayoutParams)?.let {
