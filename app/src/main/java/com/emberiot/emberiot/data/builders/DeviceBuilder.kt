@@ -16,7 +16,7 @@ class DeviceBuilder : FirebaseLiveData.DataBuilder<Device?> {
         val iconId = dataSnapshot.child("icon_id").getValue(Int::class.java) ?: 0
 
         val properties = dataSnapshot.child("properties").children.associate {
-            it.key!! to it.getValue(String::class.java)
+            it.key!! to it.child("d").getValue(String::class.java)
         }.toMutableMap()
 
         val propertyDefinitions = dataSnapshot.child("property_definitions").children

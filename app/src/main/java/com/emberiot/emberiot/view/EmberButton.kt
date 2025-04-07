@@ -69,7 +69,7 @@ class EmberButton(context: Context) : MaterialButton(context), EmberUiClass {
                 isToggled = true
                 updateStyle()
                 pushStarted = true
-                updateChannel?.invoke(ON_VAL.toString())
+                updateChannel?.invoke(PUSH_VAL.toString())
             } else {
                 isToggled = !isToggled
                 updateStyle()
@@ -138,6 +138,9 @@ class EmberButton(context: Context) : MaterialButton(context), EmberUiClass {
         } else if (intVal == PUSH_VAL) {
             pushStarted = true
             isToggled = true
+        } else if (intVal == OFF_VAL) {
+            isToggled = false
+            pushStarted = false
         }
 
         updateStyle()
