@@ -12,9 +12,7 @@ import androidx.appcompat.widget.AppCompatAutoCompleteTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -30,17 +28,14 @@ import com.emberiot.emberiot.data.enum.LabelType
 import com.emberiot.emberiot.data.enum.UiObjectType
 import com.emberiot.emberiot.databinding.FragmentUiElementConfigBinding
 import com.emberiot.emberiot.util.DeviceViewUtil
-import com.emberiot.emberiot.util.OnActionClick
 import com.emberiot.emberiot.view.EmberButton
 import com.emberiot.emberiot.view.EmberText
 import com.emberiot.emberiot.view.EmberUiClass
 import com.emberiot.emberiot.view_model.DeviceViewModel
 import com.emberiot.emberiot.view_model.LoginViewModel
 import com.emberiot.emberiot.view_model.UiElementConfigViewModel
-import kotlinx.coroutines.launch
-import kotlin.math.log
 
-class UiElementConfigFragment : Fragment(), OnActionClick {
+class UiElementConfigFragment : Fragment() {
 
     companion object {
         class BindHolder(view: View, val name: TextView, val desc: TextView) :
@@ -78,13 +73,6 @@ class UiElementConfigFragment : Fragment(), OnActionClick {
                 }
             }
         }
-    }
-
-    private val loginViewModel by lazy {
-        ViewModelProvider(requireActivity())[LoginViewModel::class.java]
-    }
-    private val deviceViewModel by lazy {
-        ViewModelProvider(requireActivity(), DeviceViewModel.DeviceViewModelFactory(loginViewModel, viewLifecycleOwner))[DeviceViewModel::class.java]
     }
 
     private val allElements = setOf(
@@ -134,10 +122,8 @@ class UiElementConfigFragment : Fragment(), OnActionClick {
     private lateinit var binding: FragmentUiElementConfigBinding
     private lateinit var currentEditing: DeviceUiObject
     private lateinit var currentDevice: Device
-    private val modifiedParams: MutableMap<String, String> = mutableMapOf()
     private val handler = Handler(Looper.getMainLooper())
     private var previewObj: View? = null
-    private var propDef: DevicePropertyDefinition? = null
 
     private val uiElementConfigViewModel by lazy {
         ViewModelProvider(requireActivity())[UiElementConfigViewModel::class.java]
@@ -190,10 +176,6 @@ class UiElementConfigFragment : Fragment(), OnActionClick {
             id = View.generateViewId()
         }
 
-        modifiedParams.clear()
-        modifiedParams.putAll(currentEditing.parameters)
-
-        propDef = currentEditing.propDef
         updatePreview()
         prepareAllParams()
         updatePropDef()
@@ -207,7 +189,7 @@ class UiElementConfigFragment : Fragment(), OnActionClick {
         }
 
         binding.removeBindBtn.setOnClickListener {
-            propDef = null
+            currentEditing.propDef = null
             updatePropDef()
         }
 
@@ -215,11 +197,11 @@ class UiElementConfigFragment : Fragment(), OnActionClick {
     }
 
     private fun updatePropDef() {
-        if (propDef != null && propDef?.id?.isNotBlank() == true) {
+        if (currentEditing.propDef != null && currentEditing.propDef?.id?.isNotBlank() == true) {
             binding.bindChannelBtn.visibility = View.GONE
             binding.removeBindBtn.visibility = View.VISIBLE
 
-            propDef?.let {
+            currentEditing.propDef?.let {
                 binding.boundChannelName.text = "${it.id} - ${it.name}"
                 binding.boundChannelDesc.setText(R.string.bound_channel_desc)
             }
@@ -245,10 +227,11 @@ class UiElementConfigFragment : Fragment(), OnActionClick {
 
         d.setNegativeButton(R.string.cancel) { _, _ -> }
         d.create().apply {
-            list.adapter = BindAdapter(currentDevice.propertyDefinitions.map { it.value }.filterNotNull()) { def ->
+            list.adapter = BindAdapter(currentDevice.propertyDefinitions.map { it.value }
+                .filterNotNull()) { def ->
                 dismiss()
 
-                propDef = def
+                currentEditing.propDef = def
                 updatePropDef()
             }
 
@@ -269,16 +252,16 @@ class UiElementConfigFragment : Fragment(), OnActionClick {
         previewObj?.let {
             binding.previewLayout.removeAllViews()
             (it as? EmberUiClass)?.let { eui ->
-                eui.parseParams(modifiedParams)
+                eui.parseParams(currentEditing.parameters)
                 eui.onChannelUpdate("0")
             }
             binding.previewLayout.addView(it)
 
-            modifiedParams[DeviceViewUtil.LABEL_PARAM]?.let { label ->
+            currentEditing.parameters[DeviceViewUtil.LABEL_PARAM]?.let { label ->
                 DeviceViewUtil.createLabel(
                     label,
                     EnumFromValue.fromValue(
-                        modifiedParams[DeviceViewUtil.LABEL_TYPE_PARAM],
+                        currentEditing.parameters[DeviceViewUtil.LABEL_TYPE_PARAM],
                         LabelType::class.java
                     ) ?: LabelType.NONE,
                     binding.previewLayout, it
@@ -293,7 +276,7 @@ class UiElementConfigFragment : Fragment(), OnActionClick {
         fieldParamsToElements.forEach { entry ->
             entry.value.text = currentEditing.parameters[entry.key] ?: ""
             entry.value.addTextChangedListener {
-                modifiedParams[entry.key] = it.toString()
+                currentEditing.parameters[entry.key] = it.toString()
                 handler.postDelayed({ updatePreview() }, 1000)
             }
         }
@@ -315,14 +298,14 @@ class UiElementConfigFragment : Fragment(), OnActionClick {
                     return@setOnItemClickListener
                 }
 
-                modifiedParams[entry.key] = enum.getValues()[position].getValueInternal()
+                currentEditing.parameters[entry.key] = enum.getValues()[position].getValueInternal()
 
                 if (enum is LabelType) {
                     val selectedType = LabelType.entries[position]
                     updateLabelVisibility(selectedType)
 
                     if (selectedType == LabelType.NONE) {
-                        modifiedParams.remove(DeviceViewUtil.LABEL_TYPE_PARAM)
+                        currentEditing.parameters.remove(DeviceViewUtil.LABEL_TYPE_PARAM)
                     }
                 }
 
@@ -338,22 +321,5 @@ class UiElementConfigFragment : Fragment(), OnActionClick {
                     entry.key.getValues().map { getString(it.getLabelId()) }
                 ))
         }
-    }
-
-    override fun onActionClick(actionId: Int): Boolean {
-        if (R.id.action_save == actionId) {
-            currentDevice.id?.let {
-                currentEditing.parameters.clear()
-                currentEditing.parameters.putAll(modifiedParams)
-                currentEditing.propDef = propDef
-
-                viewLifecycleOwner.lifecycleScope.launch {
-                    deviceViewModel.updateDeviceUi(it, currentDevice.uiObjects)
-                    findNavController().popBackStack()
-                }
-            }
-        }
-
-        return true
     }
 }

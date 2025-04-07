@@ -46,7 +46,7 @@ class DeviceBuilder : FirebaseLiveData.DataBuilder<Device?> {
                 horizontalPosition = it.child("h_pos").getValue(Float::class.java) ?: 0.5f,
                 verticalPosition = it.child("v_pos").getValue(Float::class.java) ?: 0.5f,
                 propDef = propertyDefinitions[it.child("prop_id").getValue(String::class.java)
-                    ?: ""] ?: DevicePropertyDefinition.INVALID,
+                    ?: ""],
                 parameters = it.child("params").children.associate { param ->
                     param.key!! to (param.getValue(String::class.java) ?: "")
                 }.toMutableMap()

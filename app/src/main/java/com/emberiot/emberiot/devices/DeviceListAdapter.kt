@@ -72,8 +72,9 @@ class DeviceListAdapter(
         
         holder.itemView.setOnCreateContextMenuListener { menu, v, menuInfo ->
             menu.setHeaderTitle(R.string.device_context_menu)
-            menu.add(Menu.NONE, 0, Menu.NONE, R.string.edit_device)
-            menu.add(Menu.NONE, 1, Menu.NONE, R.string.delete_device)
+            menu.add(Menu.NONE, 0, Menu.NONE, R.string.copy_device_id)
+            menu.add(Menu.NONE, 1, Menu.NONE, R.string.edit_device)
+            menu.add(Menu.NONE, 2, Menu.NONE, R.string.delete_device)
         }
     }
 
