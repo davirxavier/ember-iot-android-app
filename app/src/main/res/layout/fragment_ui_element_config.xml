@@ -165,6 +165,7 @@
             android:layout_height="wrap_content"
             app:boxStrokeColor="@color/md_theme_onBackground"
             app:hintTextColor="@color/md_theme_onBackground"
+            android:id="@+id/sizeContainer"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:hint="@string/size">
 
@@ -181,6 +182,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
+            android:id="@+id/textOffContainer"
             android:hint="@string/text_off">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -195,6 +197,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
+            android:id="@+id/textOnContainer"
             android:hint="@string/text_on">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -209,6 +212,7 @@
             app:boxStrokeColor="@color/md_theme_onBackground"
             app:hintTextColor="@color/md_theme_onBackground"
             android:layout_marginTop="4dp"
+            android:id="@+id/typeContainer"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:hint="@string/type">
 
@@ -225,6 +229,7 @@
             app:boxStrokeColor="@color/md_theme_onBackground"
             app:hintTextColor="@color/md_theme_onBackground"
             android:layout_marginTop="4dp"
+            android:id="@+id/styleContainer"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:hint="@string/style">
 
@@ -241,6 +246,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
+            android:id="@+id/prefixContainer"
             android:hint="@string/prefix">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -255,6 +261,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
+            android:id="@+id/unitContainer"
             android:hint="@string/unit">
 
             <com.google.android.material.textfield.TextInputEditText
