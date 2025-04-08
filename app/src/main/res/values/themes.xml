@@ -58,4 +58,8 @@
     <style name="Theme.EmberIot.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.EmberIot.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="TextInputLayoutPrimary" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+        <item name="colorOnSurface">@color/md_theme_primaryContainer_mediumContrast</item>
+    </style>
 </resources>

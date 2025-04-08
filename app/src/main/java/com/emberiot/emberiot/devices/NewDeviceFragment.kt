@@ -97,10 +97,9 @@ class NewDeviceFragment : Fragment(), OnActionClick {
                     ?: selectedIcon?.drawable
 
             channelListAdapter.list.clear()
-            channelListAdapter.list.addAll(currentDevice.propertyDefinitions.filter { e -> e.value != null }
-                .map { e ->
-                    e.value!!
-                }.toMutableList())
+            channelListAdapter.list.addAll(currentDevice.propertyDefinitions.map { e ->
+                e.value
+            }.toMutableList())
             channelListAdapter.notifyItemRangeInserted(0, channelListAdapter.itemCount)
         }
 
@@ -113,7 +112,12 @@ class NewDeviceFragment : Fragment(), OnActionClick {
         possibleValues: List<String>,
         updatePosition: Int = -1
     ) {
-        val newProp = DevicePropertyDefinition(DevicePropertyDefinition.getId(currentDevice.propertyDefinitions.size), name, type, possibleValues)
+        val newProp = DevicePropertyDefinition(
+            DevicePropertyDefinition.getId(currentDevice.propertyDefinitions.size),
+            name,
+            type,
+            possibleValues
+        )
         currentDevice.propertyDefinitions[newProp.id] = newProp
 
         if (updatePosition >= 0) {

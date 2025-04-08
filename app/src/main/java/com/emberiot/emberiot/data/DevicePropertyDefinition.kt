@@ -12,5 +12,7 @@ data class DevicePropertyDefinition(
         fun getId(index: Int): String {
             return "CH$index"
         }
+
+        val INVALID = DevicePropertyDefinition("", "", PropertyType.INVALID, listOf())
     }
 }

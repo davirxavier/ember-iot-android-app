@@ -151,4 +151,15 @@
     <string name="none">None</string>
 
     <string name="select_data_channel">Select Data Channel</string>
+    <string name="hint">Hint</string>
+    <string name="default_val">Default Value</string>
+
+    <string name="sample_unit">U</string>
+    <string name="sample_prefix">Prefix:</string>
+    <string name="sample_off">OFF</string>
+    <string name="sample_on">ON</string>
+    <string name="sample_hint">Sample Text</string>
+
+    <string name="delete_element">Delete Element</string>
+    <string name="select_hint">Hint text</string>
 </resources>

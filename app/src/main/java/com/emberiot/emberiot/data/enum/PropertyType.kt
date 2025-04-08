@@ -6,7 +6,8 @@ enum class PropertyType(val value: String, val labelId: Int) {
     INT("i", R.string.property_type_int),
     DOUBLE("d", R.string.property_type_double),
     STRING("s", R.string.property_type_string),
-    ENUM("e", R.string.property_type_enum);
+    ENUM("e", R.string.property_type_enum),
+    INVALID("", R.string.sample);
 
     companion object {
         fun fromValue(value: String?): PropertyType? {
