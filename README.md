@@ -123,6 +123,7 @@ use the Arduino library.
 
 # 📝 TODO
 
+- [ ] Add option for LAN communication, for when there's no network connection
 - [ ] Notification service
 - [ ] Add the option to disable and re-enable "Developer mode" (edit mode)
 - [ ] Add more UI elements
