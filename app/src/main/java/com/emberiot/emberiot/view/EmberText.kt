@@ -41,7 +41,7 @@ class EmberText(context: Context) : AppCompatTextView(context), EmberUiClass {
 
     @SuppressLint("SetTextI18n")
     override fun onChannelUpdate(newValue: String) {
-        text = "${prefix}${newValue}${unit}"
+        text = "${prefix} ${newValue} ${unit}"
     }
 
     override fun setOnChannelChangeListener(fn: UpdateChannelFn) {}

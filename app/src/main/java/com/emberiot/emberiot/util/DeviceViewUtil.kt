@@ -318,6 +318,10 @@ class DeviceViewUtil {
                         updateChannelFn(it, newVal)
                     }
                 }
+
+                if (editMode && obj is EmberText) {
+                    obj.onChannelUpdate("123")
+                }
             }
         }
 

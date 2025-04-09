@@ -32,6 +32,7 @@ import com.emberiot.emberiot.databinding.FragmentUiElementConfigBinding
 import com.emberiot.emberiot.util.DeviceViewUtil
 import com.emberiot.emberiot.util.OnActionClick
 import com.emberiot.emberiot.view.EmberButton
+import com.emberiot.emberiot.view.EmberText
 import com.emberiot.emberiot.view.EmberUiClass
 import com.emberiot.emberiot.view_model.DeviceViewModel
 import com.emberiot.emberiot.view_model.LoginViewModel
@@ -87,27 +88,27 @@ class UiElementConfigFragment : Fragment(), OnActionClick {
     }
 
     private val allElements = setOf(
-        R.id.sizeSelect,
-        R.id.textOffInput,
-        R.id.textOnInput,
-        R.id.typeSelect,
-        R.id.styleSelect,
-        R.id.prefixInput,
-        R.id.unitsInput
+        R.id.sizeContainer,
+        R.id.textOffContainer,
+        R.id.textOnContainer,
+        R.id.typeContainer,
+        R.id.styleContainer,
+        R.id.prefixContainer,
+        R.id.unitContainer
     )
 
     private val uiElementsByType = mapOf(
         UiObjectType.BUTTON to listOf(
-            R.id.sizeSelect,
-            R.id.textOffInput,
-            R.id.textOnInput,
-            R.id.typeSelect,
-            R.id.styleSelect
+            R.id.sizeContainer,
+            R.id.textOffContainer,
+            R.id.textOnContainer,
+            R.id.typeContainer,
+            R.id.styleContainer
         ),
         UiObjectType.TEXT to listOf(
-            R.id.sizeSelect,
-            R.id.prefixInput,
-            R.id.unitsInput
+            R.id.sizeContainer,
+            R.id.prefixContainer,
+            R.id.unitContainer
         )
     )
 
@@ -124,7 +125,9 @@ class UiElementConfigFragment : Fragment(), OnActionClick {
         mapOf<String, TextView>(
             EmberButton.TEXT_OFF to binding.textOffInput,
             EmberButton.TEXT_ON to binding.textOnInput,
-            DeviceViewUtil.LABEL_PARAM to binding.labelText
+            DeviceViewUtil.LABEL_PARAM to binding.labelText,
+            EmberText.UNIT to binding.unitsInput,
+            EmberText.PREFIX to binding.prefixInput,
         )
     }
 
@@ -265,7 +268,10 @@ class UiElementConfigFragment : Fragment(), OnActionClick {
         handler.removeCallbacksAndMessages(null)
         previewObj?.let {
             binding.previewLayout.removeAllViews()
-            (it as? EmberUiClass)?.parseParams(modifiedParams)
+            (it as? EmberUiClass)?.let { eui ->
+                eui.parseParams(modifiedParams)
+                eui.onChannelUpdate("0")
+            }
             binding.previewLayout.addView(it)
 
             modifiedParams[DeviceViewUtil.LABEL_PARAM]?.let { label ->
@@ -278,6 +284,8 @@ class UiElementConfigFragment : Fragment(), OnActionClick {
                     binding.previewLayout, it
                 )
             }
+
+            binding.elementPropertiesText.setText(currentEditing.type.nameLabelId)
         }
     }
 
