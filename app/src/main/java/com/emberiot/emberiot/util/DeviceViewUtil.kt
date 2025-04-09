@@ -2,7 +2,6 @@ package com.emberiot.emberiot.util
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Color
 import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
@@ -49,7 +48,8 @@ class DeviceViewUtil() {
     fun init(
         layout: ConstraintLayout,
         device: Device,
-        editMode: Boolean = false
+        editMode: Boolean = false,
+        updateChannelFn: DeviceViewChannelUpdateCallback
     ): DeviceViewChannelUpdateCallback {
         layout.removeAllViews()
 
@@ -216,7 +216,7 @@ class DeviceViewUtil() {
                                     bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID
                                     id = View.generateViewId()
                                 }
-                                setBackgroundColor(Color.parseColor("#8800FF00")) // TODO change
+                                setBackgroundColor(ContextCompat.getColor(layout.context, R.color.green))
                             }
                             layout.addView(snapHighlight)
                         }
@@ -274,6 +274,15 @@ class DeviceViewUtil() {
 
             o.propDef?.id?.let {
                 objByChannel[it] = obj
+            }
+
+            if (obj is EmberUiClass) {
+                o.propDef?.id?.let {
+                    device.properties[it]?.let { it1 -> obj.onChannelUpdate(it1) }
+                    obj.setOnChannelChangeListener { newVal ->
+                        updateChannelFn(it, newVal)
+                    }
+                }
             }
         }
 

@@ -28,6 +28,7 @@ import com.emberiot.emberiot.util.DeviceViewChannelUpdateCallback
 import com.emberiot.emberiot.util.DeviceViewUtil
 import com.emberiot.emberiot.util.OnActionClick
 import com.emberiot.emberiot.util.UiUtils
+import com.emberiot.emberiot.view.UpdateChannelFn
 import com.emberiot.emberiot.view_model.DeviceViewModel
 import com.emberiot.emberiot.view_model.LoginViewModel
 import kotlinx.coroutines.launch
@@ -118,6 +119,12 @@ class DeviceViewFragment : Fragment(), OnActionClick {
         )[DeviceViewModel::class.java]
     }
 
+    private val updateChannelFn: DeviceViewChannelUpdateCallback = { channel, newVal ->
+        viewLifecycleOwner.lifecycleScope.launch {
+            device.id?.let { deviceViewModel.updateChannel(it, channel, newVal) }
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -144,7 +151,7 @@ class DeviceViewFragment : Fragment(), OnActionClick {
             }
 
             if (!initDone) {
-                channelUpdateCallback = deviceViewUtil.init(binding.viewLayout, d, editMode)
+                channelUpdateCallback = deviceViewUtil.init(binding.viewLayout, d, editMode, updateChannelFn)
                 initDone = true
                 device = d
                 (requireActivity() as? AppCompatActivity)?.supportActionBar?.title = d.name
@@ -167,7 +174,7 @@ class DeviceViewFragment : Fragment(), OnActionClick {
 
     private fun onEditClick() {
         editMode = true
-        channelUpdateCallback = deviceViewUtil.init(binding.viewLayout, device, editMode)
+        channelUpdateCallback = deviceViewUtil.init(binding.viewLayout, device, editMode, updateChannelFn)
         requireActivity().invalidateOptionsMenu()
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
@@ -225,7 +232,7 @@ class DeviceViewFragment : Fragment(), OnActionClick {
                     )
                 )
 
-                channelUpdateCallback = deviceViewUtil.init(binding.viewLayout, device, editMode)
+                channelUpdateCallback = deviceViewUtil.init(binding.viewLayout, device, editMode, updateChannelFn)
             }
 
             show()
