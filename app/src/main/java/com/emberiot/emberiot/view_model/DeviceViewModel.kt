@@ -71,6 +71,10 @@ class DeviceViewModel(private val loginViewModel: LoginViewModel,
         )?.await()
     }
 
+    suspend fun deleteDevice(deviceId: String) {
+        devices.query?.ref?.child(deviceId)?.removeValue()?.await()
+    }
+
     class DeviceViewModelFactory(
         private val loginViewModel: LoginViewModel,
         private val lifecycleOwner: LifecycleOwner

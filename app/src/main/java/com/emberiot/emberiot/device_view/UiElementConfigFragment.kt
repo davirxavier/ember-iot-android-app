@@ -212,7 +212,7 @@ class UiElementConfigFragment : Fragment(), OnActionClick {
     }
 
     private fun updatePropDef() {
-        if (propDef != null) {
+        if (propDef != null && propDef?.id?.isNotBlank() == true) {
             binding.bindChannelBtn.visibility = View.GONE
             binding.removeBindBtn.visibility = View.VISIBLE
 

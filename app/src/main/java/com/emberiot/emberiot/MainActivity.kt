@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
@@ -133,7 +134,7 @@ class MainActivity : AppCompatActivity(), IconDialog.Callback {
                 frag.onPrev()
             } else if (frag is DeviceViewFragment && frag.editMode) {
                 frag.onExit()
-                return false
+                return true
             }
         }
 
@@ -141,6 +142,10 @@ class MainActivity : AppCompatActivity(), IconDialog.Callback {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            return onSupportNavigateUp()
+        }
+
         return UiUtils.getCurrentFragment(supportFragmentManager)
             ?.let { if (it is OnActionClick) it.onActionClick(item.itemId) else false } ?: false
     }
