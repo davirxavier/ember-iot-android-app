@@ -23,6 +23,7 @@ import com.emberiot.emberiot.data.Device
 import com.emberiot.emberiot.data.DevicePropertyDefinition
 import com.emberiot.emberiot.data.enum.PropertyType
 import com.emberiot.emberiot.databinding.FragmentNewDeviceBinding
+import com.emberiot.emberiot.util.OnActionClick
 import com.emberiot.emberiot.view_model.DeviceViewModel
 import com.emberiot.emberiot.view_model.LoginViewModel
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -33,7 +34,7 @@ import com.maltaisn.icondialog.data.Icon
 import kotlinx.coroutines.launch
 
 
-class NewDeviceFragment : Fragment() {
+class NewDeviceFragment : Fragment(), OnActionClick {
 
     companion object {
         const val DEVICE_PARAM = "device-id"
@@ -267,5 +268,13 @@ class NewDeviceFragment : Fragment() {
         super.onResume()
         isEdit = currentDevice.id != null
         (requireActivity() as? AppCompatActivity)?.supportActionBar?.setTitle(if (isEdit) R.string.edit_device else R.string.new_device)
+    }
+
+    override fun onActionClick(actionId: Int): Boolean {
+        if (actionId == R.id.action_save) {
+            onSave()
+        }
+
+        return true
     }
 }

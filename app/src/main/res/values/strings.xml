@@ -12,6 +12,9 @@
     <string name="menu_logout">Logout</string>
     <string name="new_device">New Device</string>
     <string name="edit_device">Edit Device</string>
+    <string name="device_view_new">New UI Element</string>
+    <string name="device_view_save">Save Device\'s UI</string>
+    <string name="device_view_edit">Edit Device\'s UI</string>
 
     <string name="btn_done">Done</string>
     <string name="confirm_deletion">Confirm Deletion</string>
@@ -92,8 +95,22 @@
     <string name="delete_channel_m">Are you sure you want to remove this data channel?</string>
 
     <string name="device_invalid_name">The device requires a name.</string>
-
     <string name="device_context_menu">Device</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="edit_device_ui_confirmation_title">Confirm Action</string>
+    <string name="edit_device_ui_exit_confirmation_body">Are you sure you want to go back? You will lose any unsaved changes.</string>
+    <string name="edit_device_ui_save_confirmation_body">Are you sure you want to save your changes?</string>
+    <string name="confirm">Confirm</string>
+
+    <string name="add_new_ui_element">Add new UI element</string>
+    <string name="sample">Sample</string>
+
+    <string name="ui_element_button_name">Button</string>
+    <string name="ui_element_button_desc">Toggle or push change a data channel.</string>
+    <string name="ui_element_text_name">Text</string>
+    <string name="ui_element_text_desc">Show text on screen based on a data channel\'s value (or not).</string>
+    <string name="ui_element_edit_name">Text Field</string>
+    <string name="ui_element_edit_desc">Type text and send it to a data channel.</string>
+    <string name="ui_element_select_name">Select Field</string>
+    <string name="ui_element_select_desc">Select options from a enum type data channel.</string>
 </resources>

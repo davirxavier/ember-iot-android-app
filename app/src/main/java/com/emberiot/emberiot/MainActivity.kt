@@ -16,9 +16,12 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.emberiot.emberiot.databinding.ActivityMainBinding
+import com.emberiot.emberiot.device_view.DeviceViewFragment
 import com.emberiot.emberiot.devices.DeviceListFragment
 import com.emberiot.emberiot.devices.NewDeviceFragment
+import com.emberiot.emberiot.util.OnActionClick
 import com.emberiot.emberiot.util.OnPrevCallback
+import com.emberiot.emberiot.util.UiUtils
 import com.emberiot.emberiot.view_model.LoginViewModel
 import com.google.android.material.navigation.NavigationView
 import com.maltaisn.icondialog.IconDialog
@@ -73,15 +76,17 @@ class MainActivity : AppCompatActivity(), IconDialog.Callback {
         }
 
         navView.setNavigationItemSelectedListener { item ->
-            val action = when(item.itemId) {
+            val action = when (item.itemId) {
                 R.id.nav_devices_item -> R.id.nav_devices
                 R.id.nav_settings_item -> R.id.nav_settings
                 else -> null
             }
 
-            action?.let { navController.navigate(action, null, NavOptions.Builder().apply {
-                setPopUpTo(action, true)
-            }.build()) }
+            action?.let {
+                navController.navigate(action, null, NavOptions.Builder().apply {
+                    setPopUpTo(action, true)
+                }.build())
+            }
 
             drawerLayout.closeDrawers()
             return@setNavigationItemSelectedListener true;
@@ -97,22 +102,35 @@ class MainActivity : AppCompatActivity(), IconDialog.Callback {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val id = navController.currentDestination?.id
-        menuInflater.inflate(when(id) {
-            R.id.nav_devices -> R.menu.device_list
-            R.id.newDeviceFragment -> R.menu.new_device
-            else -> R.menu.no_actions
-        }, menu)
+
+        UiUtils.getCurrentFragment(supportFragmentManager)?.let { frag ->
+            if (frag is DeviceViewFragment && frag.editMode) {
+                menuInflater.inflate(R.menu.view_editor_menu, menu)
+                return true
+            }
+        }
+
+        menuInflater.inflate(
+            when (id) {
+                R.id.nav_devices -> R.menu.device_list
+                R.id.newDeviceFragment -> R.menu.new_device
+                R.id.viewDeviceFragment -> R.menu.device_edit_view
+                else -> R.menu.no_actions
+            }, menu
+        )
+
         return true
     }
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
 
-        supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main).let {
-            it?.childFragmentManager?.fragments?.get(0)?.let { frag ->
-                if (frag is OnPrevCallback) {
-                    frag.onPrev()
-                }
+        UiUtils.getCurrentFragment(supportFragmentManager)?.let { frag ->
+            if (frag is OnPrevCallback) {
+                frag.onPrev()
+            } else if (frag is DeviceViewFragment && frag.editMode) {
+                frag.onExit()
+                return false
             }
         }
 
@@ -120,22 +138,7 @@ class MainActivity : AppCompatActivity(), IconDialog.Callback {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.action_add) {
-            navController.navigate(R.id.newDeviceFragment)
-            return true
-        }
-        else if (item.itemId == R.id.action_save) {
-            supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main).let {
-                it?.childFragmentManager?.fragments?.get(0)?.let { frag ->
-                    if (frag is NewDeviceFragment) {
-                        frag.onSave()
-                    }
-                }
-            }
-            return true
-        }
-        else {
-            return super.onOptionsItemSelected(item)
-        }
+        return UiUtils.getCurrentFragment(supportFragmentManager)
+            ?.let { if (it is OnActionClick) it.onActionClick(item.itemId) else false } ?: false
     }
 }

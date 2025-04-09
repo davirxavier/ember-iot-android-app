@@ -51,7 +51,7 @@ class DeviceBuilder : FirebaseLiveData.DataBuilder<Device?> {
                     param.key!! to (param.getValue(String::class.java) ?: "")
                 }
             )
-        }
+        }.toMutableList()
 
         return Device(id, name, lastSeen, iconId, properties, propertyDefinitions, uiObjects)
     }
