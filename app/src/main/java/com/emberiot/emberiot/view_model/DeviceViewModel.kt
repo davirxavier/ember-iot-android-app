@@ -24,7 +24,6 @@ class DeviceViewModel(private val loginViewModel: LoginViewModel,
         devices.query?.ref?.let { path ->
             val map = mapOf(
                 "name" to device.name,
-                "ui_template" to device.uiTemplate,
                 "icon_id" to device.iconId,
                 "property_definitions" to device.propertyDefinitions
                     .map { e -> e }

@@ -45,7 +45,7 @@ class NewDeviceFragment : Fragment() {
     private var selectedIcon: Icon? = EmberIotApp.iconPack?.getIcon(0)
     private lateinit var currentDevice: Device
     private lateinit var channelListAdapter: DataChannelListAdapter
-    private var isEdit = false;
+    private var isEdit = false
 
     private val loginViewModel by lazy {
         ViewModelProvider(requireActivity())[LoginViewModel::class.java]
@@ -112,9 +112,8 @@ class NewDeviceFragment : Fragment() {
         possibleValues: List<String>,
         updatePosition: Int = -1
     ) {
-        val newProp = DevicePropertyDefinition(name, type, possibleValues)
-        currentDevice.propertyDefinitions[DevicePropertyDefinition.getPropId(currentDevice.propertyDefinitions.size)] =
-            newProp
+        val newProp = DevicePropertyDefinition(DevicePropertyDefinition.getId(currentDevice.propertyDefinitions.size), name, type, possibleValues)
+        currentDevice.propertyDefinitions[newProp.id] = newProp
 
         if (updatePosition >= 0) {
             channelListAdapter.list[updatePosition] = newProp
@@ -146,7 +145,7 @@ class NewDeviceFragment : Fragment() {
     }
 
     private fun onRemoveChannel(index: Int) {
-        currentDevice.propertyDefinitions.remove(DevicePropertyDefinition.getPropId(index))
+        currentDevice.propertyDefinitions.remove(DevicePropertyDefinition.getId(index))
     }
 
     private fun openChannelDialog(prop: DevicePropertyDefinition? = null, index: Int = -1) {

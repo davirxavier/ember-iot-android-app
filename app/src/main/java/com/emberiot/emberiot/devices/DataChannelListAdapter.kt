@@ -42,7 +42,7 @@ class DataChannelListAdapter(
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = list[position]
-        holder.name.text = "${DevicePropertyDefinition.getPropId(position)} - ${item.name}"
+        holder.name.text = "${item.id} - ${item.name}"
         holder.type.setText(item.type.labelId)
 
         holder.itemView.setOnClickListener {

@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.emberiot.emberiot.R
 import com.emberiot.emberiot.databinding.FragmentDeviceListBinding
+import com.emberiot.emberiot.device_view.DeviceViewFragment
 import com.emberiot.emberiot.view_model.DeviceViewModel
 import com.emberiot.emberiot.view_model.LoginViewModel
 
@@ -27,7 +28,12 @@ class DeviceListFragment : Fragment() {
     ): View {
         binding = FragmentDeviceListBinding.inflate(inflater)
 
-        adapter = DeviceListAdapter(requireContext())
+        adapter = DeviceListAdapter(requireContext()) { d ->
+            findNavController().navigate(R.id.viewDeviceFragment, Bundle().apply {
+                putString(DeviceViewFragment.DEVICE_ID_ARG, d.id)
+            })
+        }
+
         binding.list.adapter = adapter
 
         val loginViewModel = ViewModelProvider(requireActivity())[LoginViewModel::class.java]
