@@ -13,6 +13,9 @@
     <string name="new_device">New Device</string>
     <string name="edit_device">Edit Device</string>
     <string name="delete_device">Delete Device</string>
+    <string name="copy_device_id">Copy Device ID</string>
+    <string name="device_id">Device ID</string>
+    <string name="device_id_copied">Device ID copied to clipboard.</string>
     <string name="device_view_new">New UI Element</string>
     <string name="device_view_save">Save Device\'s UI</string>
     <string name="device_view_edit">Edit Device\'s UI</string>

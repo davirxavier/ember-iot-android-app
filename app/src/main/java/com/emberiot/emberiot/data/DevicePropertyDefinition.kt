@@ -9,8 +9,6 @@ data class DevicePropertyDefinition(
     val possibleValues: List<String>
 ) {
     companion object {
-        val INVALID = DevicePropertyDefinition("", "", PropertyType.STRING, emptyList())
-
         fun getId(index: Int): String {
             return "CH$index"
         }

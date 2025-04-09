@@ -1,12 +1,18 @@
 package com.emberiot.emberiot.devices
 
+import android.R.attr.label
+import android.R.attr.text
 import android.app.AlertDialog
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -19,6 +25,7 @@ import com.emberiot.emberiot.util.OnActionClick
 import com.emberiot.emberiot.view_model.DeviceViewModel
 import com.emberiot.emberiot.view_model.LoginViewModel
 import kotlinx.coroutines.launch
+
 
 class DeviceListFragment : Fragment(), OnActionClick {
 
@@ -61,6 +68,11 @@ class DeviceListFragment : Fragment(), OnActionClick {
             return super.onContextItemSelected(item)
 
         if (item.itemId == 0) {
+            val clipboard = getSystemService(requireContext(), ClipboardManager::class.java)
+            val clip = ClipData.newPlainText(getString(R.string.device_id), adapter.contextMenuCurrentId)
+            clipboard?.setPrimaryClip(clip)
+            Toast.makeText(requireContext(), R.string.device_id_copied, Toast.LENGTH_SHORT).show()
+        } else if (item.itemId == 1) {
             findNavController().navigate(
                 R.id.newDeviceFragment,
                 bundleOf(NewDeviceFragment.DEVICE_PARAM to adapter.contextMenuCurrentId!!)

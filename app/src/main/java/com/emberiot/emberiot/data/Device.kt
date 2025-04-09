@@ -12,6 +12,6 @@ data class Device(
     val uiObjects: MutableList<DeviceUiObject> = mutableListOf()
 ) {
     fun isOnline(): Boolean {
-        return if (lastSeen < 0) false else System.currentTimeMillis() - lastSeen < Values.OFFLINE_THRESHOLD
+        return if (lastSeen < 0) false else (System.currentTimeMillis()/1000) - lastSeen < Values.OFFLINE_THRESHOLD
     }
 }
