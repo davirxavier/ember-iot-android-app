@@ -1,11 +1,8 @@
 package com.emberiot.emberiot.devices
 
-import android.R.attr.label
-import android.R.attr.text
 import android.app.AlertDialog
 import android.content.ClipData
 import android.content.ClipboardManager
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -19,19 +16,25 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.emberiot.emberiot.R
+import com.emberiot.emberiot.data.Device
 import com.emberiot.emberiot.databinding.FragmentDeviceListBinding
 import com.emberiot.emberiot.device_view.DeviceViewFragment
 import com.emberiot.emberiot.util.OnActionClick
+import com.emberiot.emberiot.util.Values
 import com.emberiot.emberiot.view_model.DeviceViewModel
 import com.emberiot.emberiot.view_model.LoginViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 class DeviceListFragment : Fragment(), OnActionClick {
 
     private lateinit var binding: FragmentDeviceListBinding
     private lateinit var adapter: DeviceListAdapter
     private lateinit var deviceViewModel: DeviceViewModel
+    private val executor = Executors.newScheduledThreadPool(1)
+    private var wasOnline = mutableListOf<Pair<Device, Int>>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -58,6 +61,26 @@ class DeviceListFragment : Fragment(), OnActionClick {
             adapter.submitList(devices)
             binding.deviceProgress.visibility = View.GONE
             binding.list.visibility = View.VISIBLE
+
+            wasOnline.clear()
+            wasOnline.addAll(devices.mapIndexed { i, d -> Pair(d, i) }.filter { d -> d.first.isOnline() })
+        }
+
+        executor.scheduleWithFixedDelay({
+
+        }, 0, Values.OFFLINE_THRESHOLD, TimeUnit.MILLISECONDS)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            while(isAdded) {
+                wasOnline.forEach { d ->
+                    if (!d.first.isOnline()) {
+                        adapter.notifyItemChanged(d.second)
+                    }
+                }
+
+                wasOnline = wasOnline.filter { it.first.isOnline() }.toMutableList()
+                delay(15000)
+            }
         }
 
         return binding.root
@@ -69,7 +92,8 @@ class DeviceListFragment : Fragment(), OnActionClick {
 
         if (item.itemId == 0) {
             val clipboard = getSystemService(requireContext(), ClipboardManager::class.java)
-            val clip = ClipData.newPlainText(getString(R.string.device_id), adapter.contextMenuCurrentId)
+            val clip =
+                ClipData.newPlainText(getString(R.string.device_id), adapter.contextMenuCurrentId)
             clipboard?.setPrimaryClip(clip)
             Toast.makeText(requireContext(), R.string.device_id_copied, Toast.LENGTH_SHORT).show()
         } else if (item.itemId == 1) {

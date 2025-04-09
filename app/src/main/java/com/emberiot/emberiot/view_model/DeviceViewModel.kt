@@ -8,6 +8,7 @@ import com.emberiot.emberiot.data.DeviceUiObject
 import com.emberiot.emberiot.data.builders.DeviceListBuilder
 import com.emberiot.emberiot.data.enum.UiObjectType
 import com.emberiot.emberiot.util.FirebaseLiveData
+import com.emberiot.emberiot.util.Values
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.tasks.await
 
@@ -67,7 +68,10 @@ class DeviceViewModel(private val loginViewModel: LoginViewModel,
 
     suspend fun updateChannel(deviceId: String, channelId: String, newValue: String) {
         devices.query?.ref?.child(deviceId)?.child("properties")?.updateChildren(
-            mapOf(channelId to newValue)
+            mapOf(channelId to mapOf(
+                "d" to newValue,
+                "w" to Values.DEVICE_TYPE
+            ))
         )?.await()
     }
 
