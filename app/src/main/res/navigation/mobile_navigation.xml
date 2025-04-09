@@ -64,6 +64,5 @@
         android:label="@string/device_name" />
     <fragment
         android:id="@+id/uiObjectConfigFragment"
-        android:name="com.emberiot.emberiot.device_view.UiElementConfigFragment"
-        android:label="@string/device_name" />
+        android:name="com.emberiot.emberiot.device_view.UiElementConfigFragment" />
 </navigation>

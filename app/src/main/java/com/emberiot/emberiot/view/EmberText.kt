@@ -8,13 +8,10 @@ import androidx.appcompat.widget.AppCompatTextView
 import com.emberiot.emberiot.R
 import com.emberiot.emberiot.data.enum.EnumFromValue
 import com.emberiot.emberiot.data.enum.LabelSize
+import com.emberiot.emberiot.data.enum.UiObjectParameter
 
 class EmberText(context: Context) : AppCompatTextView(context), EmberUiClass {
     companion object {
-        const val SIZE = "s"
-        const val UNIT = "u"
-        const val PREFIX = "p"
-
         fun adjustSize(size: LabelSize, view: TextView, hasPadding: Boolean = true) {
             view.setTextSize(TypedValue.COMPLEX_UNIT_SP, size.size)
 
@@ -31,17 +28,21 @@ class EmberText(context: Context) : AppCompatTextView(context), EmberUiClass {
 
     private var unit = ""
     private var prefix = ""
+    private var possibleValues: List<String>? = null
 
-    override fun parseParams(params: Map<String, String>) {
-        adjustSize(EnumFromValue.fromValue(params[SIZE], LabelSize::class.java) ?: LabelSize.SMALL, this, false)
+    override fun parseParams(params: Map<String, String>, possibleValues: List<String>?) {
+        adjustSize(EnumFromValue.fromValue(params[UiObjectParameter.TEXT_SIZE.value], LabelSize::class.java) ?: LabelSize.SMALL, this, false)
 
-        unit = params[UNIT] ?: ""
-        prefix = params[PREFIX] ?: ""
+        unit = params[UiObjectParameter.UNITS.value] ?: ""
+        prefix = params[UiObjectParameter.PREFIX.value] ?: ""
+
+        this.possibleValues = possibleValues
     }
 
     @SuppressLint("SetTextI18n")
     override fun onChannelUpdate(newValue: String) {
-        text = "${prefix} ${newValue} ${unit}"
+        val valueText = newValue.toIntOrNull()?.let { possibleValues?.getOrNull(it) } ?: newValue
+        text = "${prefix} ${valueText} ${unit}"
     }
 
     override fun setOnChannelChangeListener(fn: UpdateChannelFn) {}

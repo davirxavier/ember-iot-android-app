@@ -31,10 +31,10 @@ class DeviceViewModel(private val loginViewModel: LoginViewModel,
                 "property_definitions" to device.propertyDefinitions
                     .map { e -> e }
                     .associate {
-                    it.key to if (it.value == null) null else mapOf(
-                        "name" to it.value!!.name,
-                        "type" to it.value!!.type.value,
-                        "possible_values" to it.value!!.possibleValues
+                    it.key to mapOf(
+                        "name" to it.value.name,
+                        "type" to it.value.type.value,
+                        "possible_values" to it.value.possibleValues
                     )
                 }
             )
@@ -62,7 +62,7 @@ class DeviceViewModel(private val loginViewModel: LoginViewModel,
                 ))
             }
 
-            path.updateChildren(map).await()
+            path.setValue(map).await()
         }
     }
 

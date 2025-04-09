@@ -14,17 +14,12 @@ import com.emberiot.emberiot.data.enum.EmberButtonStyle
 import com.emberiot.emberiot.data.enum.EmberButtonType
 import com.emberiot.emberiot.data.enum.EnumFromValue
 import com.emberiot.emberiot.data.enum.LabelSize
+import com.emberiot.emberiot.data.enum.UiObjectParameter
 import com.emberiot.emberiot.util.UiUtils
 import com.google.android.material.button.MaterialButton
 
 class EmberButton(context: Context) : MaterialButton(context), EmberUiClass {
     companion object {
-        const val TYPE = "t"
-        const val TEXT_ON = "to"
-        const val TEXT_OFF = "tf"
-        const val ICON = "i"
-        const val STYLE = "sy"
-
         const val ON_VAL = 1
         const val OFF_VAL = 0
         const val PUSH_VAL = 2
@@ -39,25 +34,25 @@ class EmberButton(context: Context) : MaterialButton(context), EmberUiClass {
     private var type = EmberButtonType.TOGGLE
     private var pushStarted = false
 
-    override fun parseParams(params: Map<String, String>) {
-        textOn = params[TEXT_ON] ?: ""
-        textOff = params[TEXT_OFF] ?: ""
-        type = EnumFromValue.fromValue(params[TYPE], EmberButtonType::class.java) ?: EmberButtonType.TOGGLE
-        style = EnumFromValue.fromValue(params[STYLE], EmberButtonStyle::class.java) ?: EmberButtonStyle.ROUND
+    override fun parseParams(params: Map<String, String>, possibleValues: List<String>?) {
+        textOn = params[UiObjectParameter.TEXT_ON.value] ?: ""
+        textOff = params[UiObjectParameter.TEXT_OFF.value] ?: ""
+        type = EnumFromValue.fromValue(params[UiObjectParameter.BUTTON_TYPE.value], EmberButtonType::class.java) ?: EmberButtonType.TOGGLE
+        style = EnumFromValue.fromValue(params[UiObjectParameter.STYLE.value], EmberButtonStyle::class.java) ?: EmberButtonStyle.ROUND
 
-        size = EnumFromValue.fromValue(params[EmberText.SIZE], LabelSize::class.java) ?: LabelSize.SMALL
+        size = EnumFromValue.fromValue(params[UiObjectParameter.TEXT_SIZE.value], LabelSize::class.java) ?: LabelSize.SMALL
         EmberText.adjustSize(size, this)
         iconSize = (size.size * 1.5).toInt()
 
-        params[ICON]?.let {
-            EmberIotApp.iconPack?.getIcon(it.toInt())?.drawable?.let { d -> icon = d }
-            iconTint = ColorStateList.valueOf(
-                ContextCompat.getColor(
-                    context,
-                    R.color.md_theme_onBackground
-                )
-            )
-        }
+//        params[ICON]?.let {
+//            EmberIotApp.iconPack?.getIcon(it.toInt())?.drawable?.let { d -> icon = d }
+//            iconTint = ColorStateList.valueOf(
+//                ContextCompat.getColor(
+//                    context,
+//                    R.color.md_theme_onBackground
+//                )
+//            )
+//        }
 
         updateStyle()
         setOnClickListener {

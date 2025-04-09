@@ -117,6 +117,7 @@ class MainActivity : AppCompatActivity(), IconDialog.Callback {
                     R.id.nav_devices -> R.menu.device_list
                     R.id.newDeviceFragment -> R.menu.new_device
                     R.id.viewDeviceFragment -> R.menu.device_edit_view
+                    R.id.uiObjectConfigFragment -> R.menu.ui_element_config
                     else -> R.menu.no_actions
                 }, menu
             )

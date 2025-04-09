@@ -25,17 +25,15 @@ import com.emberiot.emberiot.data.enum.EmberButtonType
 import com.emberiot.emberiot.data.enum.EnumFromValue
 import com.emberiot.emberiot.data.enum.LabelSize
 import com.emberiot.emberiot.data.enum.LabelType
+import com.emberiot.emberiot.data.enum.UiObjectParameter
 import com.emberiot.emberiot.data.enum.UiObjectType
 import com.emberiot.emberiot.databinding.FragmentUiElementConfigBinding
 import com.emberiot.emberiot.util.DeviceViewUtil
-import com.emberiot.emberiot.view.EmberButton
-import com.emberiot.emberiot.view.EmberText
+import com.emberiot.emberiot.util.OnActionClick
 import com.emberiot.emberiot.view.EmberUiClass
-import com.emberiot.emberiot.view_model.DeviceViewModel
-import com.emberiot.emberiot.view_model.LoginViewModel
 import com.emberiot.emberiot.view_model.UiElementConfigViewModel
 
-class UiElementConfigFragment : Fragment() {
+class UiElementConfigFragment : Fragment(), OnActionClick {
 
     companion object {
         class BindHolder(view: View, val name: TextView, val desc: TextView) :
@@ -97,6 +95,10 @@ class UiElementConfigFragment : Fragment() {
             R.id.sizeContainer,
             R.id.prefixContainer,
             R.id.unitContainer
+        ),
+        UiObjectType.SELECT to listOf(
+            R.id.sizeContainer,
+            R.id.hintContainer,
         )
     )
 
@@ -111,11 +113,12 @@ class UiElementConfigFragment : Fragment() {
 
     private val fieldParamsToElements by lazy {
         mapOf<String, TextView>(
-            EmberButton.TEXT_OFF to binding.textOffInput,
-            EmberButton.TEXT_ON to binding.textOnInput,
-            DeviceViewUtil.LABEL_PARAM to binding.labelText,
-            EmberText.UNIT to binding.unitsInput,
-            EmberText.PREFIX to binding.prefixInput,
+            UiObjectParameter.TEXT_OFF.value to binding.textOffInput,
+            UiObjectParameter.TEXT_ON.value to binding.textOnInput,
+            UiObjectParameter.LABEL.value to binding.labelText,
+            UiObjectParameter.UNITS.value to binding.unitsInput,
+            UiObjectParameter.PREFIX.value to binding.prefixInput,
+            UiObjectParameter.HINT.value to binding.hintText,
         )
     }
 
@@ -227,8 +230,9 @@ class UiElementConfigFragment : Fragment() {
 
         d.setNegativeButton(R.string.cancel) { _, _ -> }
         d.create().apply {
-            list.adapter = BindAdapter(currentDevice.propertyDefinitions.map { it.value }
-                .filterNotNull()) { def ->
+            list.adapter = BindAdapter(currentDevice.propertyDefinitions.filter {
+                currentEditing.type.compatiblePropertyTypes.contains(it.value.type)
+            }.map { it.value }) { def ->
                 dismiss()
 
                 currentEditing.propDef = def
@@ -257,11 +261,11 @@ class UiElementConfigFragment : Fragment() {
             }
             binding.previewLayout.addView(it)
 
-            currentEditing.parameters[DeviceViewUtil.LABEL_PARAM]?.let { label ->
+            currentEditing.parameters[UiObjectParameter.LABEL.value]?.let { label ->
                 DeviceViewUtil.createLabel(
                     label,
                     EnumFromValue.fromValue(
-                        currentEditing.parameters[DeviceViewUtil.LABEL_TYPE_PARAM],
+                        currentEditing.parameters[UiObjectParameter.LABEL_POSITION.value],
                         LabelType::class.java
                     ) ?: LabelType.NONE,
                     binding.previewLayout, it
@@ -281,10 +285,10 @@ class UiElementConfigFragment : Fragment() {
             }
         }
 
-        currentEditing.type.enumParams.filter { it.value != null }.forEach { entry ->
-            val enum = entry.value ?: return@forEach
-            val select = enumsToUiElements[enum.getValues().first()]
-            var value = currentEditing.parameters[entry.key]
+        UiObjectParameter.getByType(currentEditing.type).forEach { entry ->
+            val enum = entry.enumMapping ?: return@forEach
+            val select = enumsToUiElements[entry.enumMapping]
+            var value = currentEditing.parameters[entry.value]
 
             if (enum is LabelType) {
                 updateLabelVisibility(EnumFromValue.fromValue(value, enum) as? LabelType)
@@ -298,14 +302,15 @@ class UiElementConfigFragment : Fragment() {
                     return@setOnItemClickListener
                 }
 
-                currentEditing.parameters[entry.key] = enum.getValues()[position].getValueInternal()
+                currentEditing.parameters[entry.value] =
+                    enum.getValues()[position].getValueInternal()
 
                 if (enum is LabelType) {
                     val selectedType = LabelType.entries[position]
                     updateLabelVisibility(selectedType)
 
                     if (selectedType == LabelType.NONE) {
-                        currentEditing.parameters.remove(DeviceViewUtil.LABEL_TYPE_PARAM)
+                        currentEditing.parameters.remove(UiObjectParameter.LABEL_POSITION.value)
                     }
                 }
 
@@ -321,5 +326,14 @@ class UiElementConfigFragment : Fragment() {
                     entry.key.getValues().map { getString(it.getLabelId()) }
                 ))
         }
+    }
+
+    override fun onActionClick(actionId: Int): Boolean {
+        if (actionId == R.id.action_ui_config_delete) {
+            currentDevice.uiObjects.remove(currentEditing)
+            findNavController().popBackStack()
+        }
+
+        return true
     }
 }

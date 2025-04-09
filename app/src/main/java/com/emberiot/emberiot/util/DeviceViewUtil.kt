@@ -17,9 +17,11 @@ import com.emberiot.emberiot.data.Device
 import com.emberiot.emberiot.data.DeviceUiObject
 import com.emberiot.emberiot.data.enum.EnumFromValue
 import com.emberiot.emberiot.data.enum.LabelType
+import com.emberiot.emberiot.data.enum.UiObjectParameter
 import com.emberiot.emberiot.data.enum.UiObjectType
 import com.emberiot.emberiot.view.DottedGridView
 import com.emberiot.emberiot.view.EmberButton
+import com.emberiot.emberiot.view.EmberSelect
 import com.emberiot.emberiot.view.EmberText
 import com.emberiot.emberiot.view.EmberUiClass
 import kotlin.math.abs
@@ -31,14 +33,11 @@ typealias OpenUiConfigFn = (obj: DeviceUiObject) -> Unit
 class DeviceViewUtil {
 
     companion object {
-        const val LABEL_PARAM = "label"
-        const val LABEL_TYPE_PARAM = "labelt"
-        const val DOTTED_LINE_SIZE = 2
-
         fun getClass(context: Context, type: UiObjectType): View? {
             return when (type) {
                 UiObjectType.BUTTON -> EmberButton(context)
                 UiObjectType.TEXT -> EmberText(context)
+                UiObjectType.SELECT -> EmberSelect(context)
                 else -> null
             }
         }
@@ -204,11 +203,18 @@ class DeviceViewUtil {
                     )
                 )
             }
-            (obj as? EmberUiClass)?.apply { parseParams(o.parameters) }
+            (obj as? EmberUiClass)?.apply {
+                if (editMode) {
+                    val sample = ContextCompat.getString(layout.context, R.string.sample)
+                    parseParams(UiObjectParameter.getParamsByType(o.type, layout.context), listOf(sample, sample, sample))
+                } else {
+                    parseParams(o.parameters, o.propDef?.possibleValues ?: listOf())
+                }
+            }
 
             layout.addView(obj)
-            o.parameters[LABEL_PARAM]?.let {
-                createLabel(it, EnumFromValue.fromValue(o.parameters[LABEL_TYPE_PARAM], LabelType::class.java) ?: LabelType.NONE, layout, obj)
+            o.parameters[UiObjectParameter.LABEL.value]?.let {
+                createLabel(it, EnumFromValue.fromValue(o.parameters[UiObjectParameter.LABEL_POSITION.value], LabelType::class.java) ?: LabelType.NONE, layout, obj)
             }
 
             if (editMode) {
@@ -321,6 +327,10 @@ class DeviceViewUtil {
 
                 if (editMode && obj is EmberText) {
                     obj.onChannelUpdate("123")
+                }
+
+                if (editMode) {
+                    obj.disableTouch()
                 }
             }
         }

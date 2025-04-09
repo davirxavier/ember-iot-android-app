@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.emberiot.emberiot.R
 import com.emberiot.emberiot.data.Device
 import com.emberiot.emberiot.data.DeviceUiObject
+import com.emberiot.emberiot.data.enum.UiObjectParameter
 import com.emberiot.emberiot.data.enum.UiObjectType
 import com.emberiot.emberiot.databinding.FragmentDeviceViewBinding
 import com.emberiot.emberiot.util.DeviceViewChannelUpdateCallback
@@ -30,6 +31,9 @@ import com.emberiot.emberiot.util.DeviceViewUtil
 import com.emberiot.emberiot.util.OnActionClick
 import com.emberiot.emberiot.util.OpenUiConfigFn
 import com.emberiot.emberiot.util.UiUtils
+import com.emberiot.emberiot.view.EmberSelect
+import com.emberiot.emberiot.view.EmberText
+import com.emberiot.emberiot.view.EmberUiClass
 import com.emberiot.emberiot.view.UpdateChannelFn
 import com.emberiot.emberiot.view_model.DeviceViewModel
 import com.emberiot.emberiot.view_model.LoginViewModel
@@ -80,15 +84,12 @@ class DeviceViewFragment : Fragment(), OnActionClick {
                     id = View.generateViewId()
                 } ?: return
 
-                if (element is TextView) {
-                    element.setText(enum.nameLabelId)
-                    element.setTextColor(
-                        ContextCompat.getColor(
-                            holder.itemView.context,
-                            R.color.md_theme_onBackground
-                        )
-                    )
+                (element as? EmberUiClass)?.let { euc ->
+                    val sample = ContextCompat.getString(holder.itemView.context, R.string.sample)
+                    euc.parseParams(UiObjectParameter.getParamsByType(enum, holder.itemView.context), listOf(sample, sample, sample))
                 }
+
+                (element as? EmberText)?.text = "123"
 
                 (holder.itemView as? ViewGroup)?.findViewById<LinearLayout>(R.id.layout)
                     ?.addView(element)
@@ -276,6 +277,12 @@ class DeviceViewFragment : Fragment(), OnActionClick {
         if (initDone) {
             initDone = false
             init(device)
+        }
+
+        if (editMode) {
+            requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+                onExit()
+            }
         }
     }
 }

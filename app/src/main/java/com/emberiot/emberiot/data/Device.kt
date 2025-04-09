@@ -8,7 +8,7 @@ data class Device(
     val lastSeen: Long = -1,
     var iconId: Int = 0,
     val properties: MutableMap<String, String?> = mutableMapOf(),
-    val propertyDefinitions: MutableMap<String, DevicePropertyDefinition?> = mutableMapOf(),
+    val propertyDefinitions: MutableMap<String, DevicePropertyDefinition> = mutableMapOf(),
     val uiObjects: MutableList<DeviceUiObject> = mutableListOf()
 ) {
     fun isOnline(): Boolean {

@@ -22,7 +22,7 @@ class DeviceBuilder : FirebaseLiveData.DataBuilder<Device?> {
         val propertyDefinitions = dataSnapshot.child("property_definitions").children
             .filter { it.hasChild("type") }
             .associate {
-                it.key!! to PropertyType.fromValue(it.child("type").getValue(String::class.java))
+                it.key!! to (PropertyType.fromValue(it.child("type").getValue(String::class.java))
                     ?.let { propType ->
                         DevicePropertyDefinition(
                             it.key!!,
@@ -34,8 +34,8 @@ class DeviceBuilder : FirebaseLiveData.DataBuilder<Device?> {
                                 )
                             }
                         )
-                    }
-            }.filter { it.value != null }.toMutableMap()
+                    } ?: DevicePropertyDefinition.INVALID)
+            }.filter { it.value != DevicePropertyDefinition.INVALID }.toMutableMap()
 
         val uiObjects = dataSnapshot.child("ui_objects").children.map {
             DeviceUiObject(
