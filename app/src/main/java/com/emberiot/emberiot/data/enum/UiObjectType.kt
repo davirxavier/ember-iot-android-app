@@ -20,7 +20,13 @@ enum class UiObjectType(
         PropertyType.INT,
         PropertyType.DOUBLE
     ),
-    EDIT_TEXT(R.string.ui_element_edit_name, R.string.ui_element_edit_desc, PropertyType.STRING),
+    EDIT_TEXT(
+        R.string.ui_element_edit_name,
+        R.string.ui_element_edit_desc,
+        PropertyType.STRING,
+        PropertyType.INT,
+        PropertyType.DOUBLE
+    ),
     SELECT(R.string.ui_element_select_name, R.string.ui_element_select_desc, PropertyType.ENUM),
 
     INVALID(R.string.ui_element_text_name, R.string.ui_element_text_desc);

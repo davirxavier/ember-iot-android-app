@@ -2,7 +2,6 @@ package com.emberiot.emberiot.device_view
 
 import android.content.DialogInterface
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -31,10 +30,10 @@ import com.emberiot.emberiot.util.DeviceViewUtil
 import com.emberiot.emberiot.util.OnActionClick
 import com.emberiot.emberiot.util.OpenUiConfigFn
 import com.emberiot.emberiot.util.UiUtils
+import com.emberiot.emberiot.view.EmberEditText
 import com.emberiot.emberiot.view.EmberSelect
 import com.emberiot.emberiot.view.EmberText
 import com.emberiot.emberiot.view.EmberUiClass
-import com.emberiot.emberiot.view.UpdateChannelFn
 import com.emberiot.emberiot.view_model.DeviceViewModel
 import com.emberiot.emberiot.view_model.LoginViewModel
 import com.emberiot.emberiot.view_model.UiElementConfigViewModel
@@ -52,7 +51,7 @@ class DeviceViewFragment : Fragment(), OnActionClick {
         class AddDialogAdapter(private val itemClicked: (item: UiObjectType) -> Unit) :
             RecyclerView.Adapter<AddDialogHolder>() {
 
-            val list = UiObjectType.entries
+            val list = UiObjectType.entries.filter { it != UiObjectType.INVALID }
 
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AddDialogHolder {
                 val view = LayoutInflater.from(parent.context)
@@ -86,10 +85,19 @@ class DeviceViewFragment : Fragment(), OnActionClick {
 
                 (element as? EmberUiClass)?.let { euc ->
                     val sample = ContextCompat.getString(holder.itemView.context, R.string.sample)
-                    euc.parseParams(UiObjectParameter.getParamsByType(enum, holder.itemView.context), listOf(sample, sample, sample))
+                    euc.parseParams(
+                        UiObjectParameter.getParamsByType(
+                            enum,
+                            holder.itemView.context
+                        ), listOf(sample, sample, sample)
+                    )
                 }
 
                 (element as? EmberText)?.text = "123"
+
+                if (element is EmberEditText || element is EmberSelect) {
+                    (element as? EmberUiClass)?.setWidthAll(UiUtils.dpToPx(120f, holder.itemView.resources).toInt())
+                }
 
                 (holder.itemView as? ViewGroup)?.findViewById<LinearLayout>(R.id.layout)
                     ?.addView(element)
@@ -191,7 +199,13 @@ class DeviceViewFragment : Fragment(), OnActionClick {
     }
 
     private fun updateLayout() {
-        channelUpdateCallback = deviceViewUtil.init(binding.viewLayout, device, editMode, updateChannelFn, openObjectConfigFn)
+        channelUpdateCallback = deviceViewUtil.init(
+            binding.viewLayout,
+            device,
+            editMode,
+            updateChannelFn,
+            openObjectConfigFn
+        )
     }
 
     private fun onEditClick() {

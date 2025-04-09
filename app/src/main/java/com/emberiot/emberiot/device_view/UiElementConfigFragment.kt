@@ -20,6 +20,7 @@ import com.emberiot.emberiot.R
 import com.emberiot.emberiot.data.Device
 import com.emberiot.emberiot.data.DevicePropertyDefinition
 import com.emberiot.emberiot.data.DeviceUiObject
+import com.emberiot.emberiot.data.enum.EditTextType
 import com.emberiot.emberiot.data.enum.EmberButtonStyle
 import com.emberiot.emberiot.data.enum.EmberButtonType
 import com.emberiot.emberiot.data.enum.EnumFromValue
@@ -80,7 +81,9 @@ class UiElementConfigFragment : Fragment(), OnActionClick {
         R.id.typeContainer,
         R.id.styleContainer,
         R.id.prefixContainer,
-        R.id.unitContainer
+        R.id.unitContainer,
+        R.id.editTypeContainer,
+        R.id.hintContainer,
     )
 
     private val uiElementsByType = mapOf(
@@ -99,6 +102,11 @@ class UiElementConfigFragment : Fragment(), OnActionClick {
         UiObjectType.SELECT to listOf(
             R.id.sizeContainer,
             R.id.hintContainer,
+        ),
+        UiObjectType.EDIT_TEXT to listOf(
+            R.id.sizeContainer,
+            R.id.hintContainer,
+            R.id.editTypeSelect
         )
     )
 
@@ -107,7 +115,8 @@ class UiElementConfigFragment : Fragment(), OnActionClick {
             EmberButtonStyle.entries.first() to binding.styleSelect,
             EmberButtonType.entries.first() to binding.typeSelect,
             LabelSize.entries.first() to binding.sizeSelect,
-            LabelType.entries.first() to binding.labelTypeSelect
+            LabelType.entries.first() to binding.labelTypeSelect,
+            EditTextType.entries.first() to binding.editTypeSelect
         )
     }
 

@@ -68,6 +68,8 @@ enum class UiObjectParameter(
         *UiObjectType.entries.toTypedArray()
     ),
 
+    EDIT_TYPE("et", R.string.type, EditTextType.entries.first(), null, null, UiObjectType.EDIT_TEXT),
+
     INVALID("", R.string.sample, null, null, null, UiObjectType.INVALID);
 
     override fun getValueInternal(): String {
