@@ -103,21 +103,24 @@ class MainActivity : AppCompatActivity(), IconDialog.Callback {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val id = navController.currentDestination?.id
 
-        UiUtils.getCurrentFragment(supportFragmentManager)?.let { frag ->
-            if (frag is DeviceViewFragment && frag.editMode) {
-                menuInflater.inflate(R.menu.view_editor_menu, menu)
-                return true
+        binding.root.post {
+            UiUtils.getCurrentFragment(supportFragmentManager)?.let { frag ->
+                if (frag is DeviceViewFragment && frag.editMode) {
+                    menuInflater.inflate(R.menu.view_editor_menu, menu)
+                    return@post
+                }
             }
-        }
 
-        menuInflater.inflate(
-            when (id) {
-                R.id.nav_devices -> R.menu.device_list
-                R.id.newDeviceFragment -> R.menu.new_device
-                R.id.viewDeviceFragment -> R.menu.device_edit_view
-                else -> R.menu.no_actions
-            }, menu
-        )
+            menuInflater.inflate(
+                when (id) {
+                    R.id.nav_devices -> R.menu.device_list
+                    R.id.newDeviceFragment -> R.menu.new_device
+                    R.id.viewDeviceFragment -> R.menu.device_edit_view
+                    R.id.uiObjectConfigFragment -> R.menu.new_device
+                    else -> R.menu.no_actions
+                }, menu
+            )
+        }
 
         return true
     }

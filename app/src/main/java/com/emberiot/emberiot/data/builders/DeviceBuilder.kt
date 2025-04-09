@@ -49,7 +49,7 @@ class DeviceBuilder : FirebaseLiveData.DataBuilder<Device?> {
                     ?: ""] ?: DevicePropertyDefinition.INVALID,
                 parameters = it.child("params").children.associate { param ->
                     param.key!! to (param.getValue(String::class.java) ?: "")
-                }
+                }.toMutableMap()
             )
         }.toMutableList()
 

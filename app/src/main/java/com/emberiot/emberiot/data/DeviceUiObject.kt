@@ -6,7 +6,7 @@ data class DeviceUiObject(
     val id: String,
     var propDef: DevicePropertyDefinition?,
     val type: UiObjectType,
-    val parameters: Map<String, String>,
+    val parameters: MutableMap<String, String>,
     var horizontalPosition: Float,
     var verticalPosition: Float
 )
