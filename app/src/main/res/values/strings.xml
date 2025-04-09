@@ -10,9 +10,12 @@
     <string name="menu_devices">Devices</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_logout">Logout</string>
+    <string name="new_device">New Device</string>
+    <string name="edit_device">Edit Device</string>
 
     <string name="btn_done">Done</string>
     <string name="confirm_deletion">Confirm Deletion</string>
+    <string name="save">Save</string>
     <string name="cancel">Cancel</string>
 
     <!-- Strings related to login -->
@@ -62,9 +65,33 @@
 
     <string name="login_back">Back to Config</string>
 
-    <!-- Preferences -->
     <string name="notifications_header">Notifications</string>
     <string name="developer_header">Developer Settings</string>
     <string name="notifications_title">Enable notifications</string>
     <string name="developer_mode">Developer mode</string>
+    <string name="select_device_icon">Select Device Icon</string>
+    <string name="device_name">Device Name</string>
+    <string name="add_new_channel">Add New Data Channel</string>
+    <string name="edit_new_channel">Edit Data Channel</string>
+    <string name="new_channel_name">Channel Name</string>
+    <string name="enter_value_text">Enter Value Text</string>
+    <string name="add_new_value">Add New Value</string>
+    <string name="channel_value">Channel Value</string>
+    <string name="remove_item_from_values_list">Remove item from values list</string>
+
+    <string name="property_type_int">Integer</string>
+    <string name="property_type_double">Decimal</string>
+    <string name="property_type_string">String</string>
+    <string name="property_type_enum">Enumeration</string>
+    <string name="select_a_channel_data_type">Channel Data Type</string>
+    <string name="invalid_name">Invalid data channel name.</string>
+    <string name="invalid_type">Invalid data channel type.</string>
+    <string name="invalid_values">You need at least one value for the type \"Enumeration\".</string>
+
+    <string name="delete_channel">Delete Data Channel</string>
+    <string name="delete_channel_m">Are you sure you want to remove this data channel?</string>
+
+    <string name="device_invalid_name">The device requires a name.</string>
+
+    <string name="device_context_menu">Device</string>
 </resources>
