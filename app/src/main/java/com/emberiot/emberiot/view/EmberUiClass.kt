@@ -8,4 +8,5 @@ interface EmberUiClass {
     fun setOnChannelChangeListener(fn: UpdateChannelFn)
     fun enableTouch() {}
     fun disableTouch() {}
+    fun setWidthAll(px: Int){}
 }

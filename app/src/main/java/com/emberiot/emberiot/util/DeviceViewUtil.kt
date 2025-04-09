@@ -21,6 +21,7 @@ import com.emberiot.emberiot.data.enum.UiObjectParameter
 import com.emberiot.emberiot.data.enum.UiObjectType
 import com.emberiot.emberiot.view.DottedGridView
 import com.emberiot.emberiot.view.EmberButton
+import com.emberiot.emberiot.view.EmberEditText
 import com.emberiot.emberiot.view.EmberSelect
 import com.emberiot.emberiot.view.EmberText
 import com.emberiot.emberiot.view.EmberUiClass
@@ -38,6 +39,7 @@ class DeviceViewUtil {
                 UiObjectType.BUTTON -> EmberButton(context)
                 UiObjectType.TEXT -> EmberText(context)
                 UiObjectType.SELECT -> EmberSelect(context)
+                UiObjectType.EDIT_TEXT -> EmberEditText(context)
                 else -> null
             }
         }
@@ -110,7 +112,7 @@ class DeviceViewUtil {
     }
 
     private val gridSize = 30
-    private val objByChannel = mutableMapOf<String, View>()
+    private val objsByChannel = mutableMapOf<String, MutableList<View>>()
     private var wasNearXCenter = false
     private var wasNearYCenter = false
 
@@ -206,7 +208,10 @@ class DeviceViewUtil {
             (obj as? EmberUiClass)?.apply {
                 if (editMode) {
                     val sample = ContextCompat.getString(layout.context, R.string.sample)
-                    parseParams(UiObjectParameter.getParamsByType(o.type, layout.context), listOf(sample, sample, sample))
+                    val sampleParams = UiObjectParameter.getParamsByType(o.type, layout.context)
+                    parseParams(sampleParams.entries.associate {
+                        it.key to (o.parameters[it.key] ?: it.value)
+                    }, listOf(sample, sample, sample))
                 } else {
                     parseParams(o.parameters, o.propDef?.possibleValues ?: listOf())
                 }
@@ -314,7 +319,11 @@ class DeviceViewUtil {
             }
 
             o.propDef?.id?.let {
-                objByChannel[it] = obj
+                if (!objsByChannel.containsKey(it)) {
+                    objsByChannel[it] = mutableListOf()
+                }
+
+                objsByChannel[it]?.add(obj)
             }
 
             if (obj is EmberUiClass) {
@@ -336,7 +345,9 @@ class DeviceViewUtil {
         }
 
         return { channel, value ->
-            (objByChannel[channel] as? EmberUiClass)?.onChannelUpdate(value)
+            objsByChannel[channel]?.forEach {
+                (it as? EmberUiClass)?.onChannelUpdate(value)
+            }
         }
     }
 

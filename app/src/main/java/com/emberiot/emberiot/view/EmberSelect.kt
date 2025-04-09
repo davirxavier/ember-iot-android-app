@@ -31,8 +31,6 @@ class EmberSelect(context: Context) : FrameLayout(context), EmberUiClass {
         layout = findViewById(R.id.textInputLayout)
         autoCompleteTextView = findViewById(R.id.input)
 
-
-
         layout.boxStrokeColor = ContextCompat.getColor(context, R.color.md_theme_onBackground)
         layout.hintTextColor =
             ColorStateList.valueOf(ContextCompat.getColor(context, R.color.md_theme_onBackground))
@@ -56,22 +54,11 @@ class EmberSelect(context: Context) : FrameLayout(context), EmberUiClass {
 
         params[UiObjectParameter.TEXT_SIZE.value]?.let {
             val enum = EnumFromValue.fromValue(it, LabelSize::class.java) ?: LabelSize.SMALL
-
-            layoutParams = layoutParams.apply {
-                width = UiUtils.dpToPx(
-                    when (enum) {
-                        LabelSize.SMALL -> 150f
-                        LabelSize.MEDIUM -> 220f
-                        LabelSize.LARGE -> 320f
-                    }, resources
-                ).toInt()
-            }
-
-            children.forEach { child ->
-                child.layoutParams = child.layoutParams.apply {
-                    width = layoutParams.width
-                }
-            }
+            setWidthAll(UiUtils.dpToPx(when (enum) {
+                LabelSize.SMALL -> 150f
+                LabelSize.MEDIUM -> 220f
+                LabelSize.LARGE -> 320f
+            }, resources).toInt())
         }
 
         possibleValues?.let {
@@ -98,5 +85,17 @@ class EmberSelect(context: Context) : FrameLayout(context), EmberUiClass {
 
     override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
         return touchDisabled
+    }
+
+    override fun setWidthAll(px: Int) {
+        layoutParams = layoutParams.apply {
+            width = px
+        }
+
+        children.forEach { child ->
+            child.layoutParams = child.layoutParams.apply {
+                width = layoutParams.width
+            }
+        }
     }
 }

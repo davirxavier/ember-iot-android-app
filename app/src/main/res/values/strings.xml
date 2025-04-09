@@ -162,4 +162,8 @@
 
     <string name="delete_element">Delete Element</string>
     <string name="select_hint">Hint text</string>
+
+    <string name="edit_type_text">Text</string>
+    <string name="edit_type_number">Number</string>
+    <string name="edit_type_date">Date</string>
 </resources>
