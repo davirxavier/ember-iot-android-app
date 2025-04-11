@@ -37,6 +37,7 @@ class EmberText(context: Context) : AppCompatTextView(context), EmberUiClass {
         prefix = params[UiObjectParameter.PREFIX.value] ?: ""
 
         this.possibleValues = possibleValues
+        onChannelUpdate("0")
     }
 
     @SuppressLint("SetTextI18n")

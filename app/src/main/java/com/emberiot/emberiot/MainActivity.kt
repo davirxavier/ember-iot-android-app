@@ -4,11 +4,10 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
@@ -18,7 +17,6 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.emberiot.emberiot.databinding.ActivityMainBinding
 import com.emberiot.emberiot.device_view.DeviceViewFragment
-import com.emberiot.emberiot.devices.DeviceListFragment
 import com.emberiot.emberiot.devices.NewDeviceFragment
 import com.emberiot.emberiot.util.OnActionClick
 import com.emberiot.emberiot.util.OnPrevCallback
@@ -28,6 +26,7 @@ import com.google.android.material.navigation.NavigationView
 import com.maltaisn.icondialog.IconDialog
 import com.maltaisn.icondialog.data.Icon
 import com.maltaisn.icondialog.pack.IconPack
+import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity(), IconDialog.Callback {
 
@@ -93,11 +92,23 @@ class MainActivity : AppCompatActivity(), IconDialog.Callback {
             return@setNavigationItemSelectedListener true;
         }
 
-        EmberIotApp.initCallback = {
-            loginViewModel.currentUser.observe(this) {
-                val emailText: TextView = navView.getHeaderView(0).findViewById(R.id.userEmail)
-                emailText.text = it.user.email
+        var init = false
+        EmberIotApp.firebaseInit.observe(this) {
+            if (init) {
+                return@observe
             }
+
+            loginViewModel.currentUser.observe(this) {
+                if (it != null) {
+                    val emailText: TextView = navView.getHeaderView(0).findViewById(R.id.userEmail)
+                    emailText.text = it.user.email
+                }
+                else {
+//                    navController.navigate(R.id.action_settings_to_login)
+                    exitProcess(0) // FIXME fix navigation manager
+                }
+            }
+            init = true
         }
     }
 

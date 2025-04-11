@@ -16,4 +16,10 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory app:title="@string/account_header">
+
+        <Preference app:key="logout" app:title="@string/logout" app:widgetLayout="@layout/setting_icon_item" />
+
+    </PreferenceCategory>
+
 </PreferenceScreen>

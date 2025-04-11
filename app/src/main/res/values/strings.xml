@@ -74,6 +74,8 @@
 
     <string name="notifications_header">Notifications</string>
     <string name="developer_header">Developer Settings</string>
+    <string name="account_header">Account</string>
+    <string name="logout">Logout</string>
     <string name="notifications_title">Enable notifications</string>
     <string name="developer_mode">Developer mode</string>
     <string name="select_device_icon">Select Device Icon</string>
@@ -105,6 +107,7 @@
     <string name="edit_device_ui_exit_confirmation_body">Are you sure you want to go back? You will lose any unsaved changes.</string>
     <string name="edit_device_ui_save_confirmation_body">Are you sure you want to save your changes?</string>
     <string name="confirm">Confirm</string>
+    <string name="logout_confirm">Are you sure you want to sign off the app?</string>
 
     <string name="add_new_ui_element">Add new UI element</string>
     <string name="sample">Sample</string>
@@ -166,4 +169,5 @@
     <string name="edit_type_text">Text</string>
     <string name="edit_type_number">Number</string>
     <string name="edit_type_date">Date</string>
+    <string name="invalid_key">Invalid Firebase configuration, please submit valid info.</string>
 </resources>

@@ -24,6 +24,7 @@ import com.emberiot.emberiot.R
 import com.emberiot.emberiot.databinding.FragmentLoginBinding
 import com.emberiot.emberiot.util.OnPrevCallback
 import com.emberiot.emberiot.view_model.LoginViewModel
+import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 import org.json.JSONObject
@@ -76,9 +77,31 @@ class LoginFragment : Fragment(), OnPrevCallback {
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
-        loginViewModel.currentUser.observe(viewLifecycleOwner) {
-            redirectHome()
+
+        EmberIotApp.firebaseInit.observe(viewLifecycleOwner) { init ->
+            if (init == false) {
+                return@observe
+            }
+
+            loginViewModel.currentUser.observe(viewLifecycleOwner) {
+                currentStep = Steps.PROGRESS_LOGIN
+                updateStep()
+
+                FirebaseAuth.getInstance().signInAnonymously().addOnCompleteListener {
+                    val isApiKey = (it.exception as? FirebaseException)?.message?.contains("API key not valid") ?: false
+                    if (isApiKey) {
+                        Toast.makeText(requireContext(), R.string.invalid_key, Toast.LENGTH_LONG).show()
+                        FirebaseAuth.getInstance().signOut()
+                        EmberIotApp.deinitFirebase()
+                        currentStep = Steps.INSTRUCTIONS
+                        updateStep()
+                    } else {
+                        redirectHome()
+                    }
+                }
+            }
         }
+
         return binding.root;
     }
 
