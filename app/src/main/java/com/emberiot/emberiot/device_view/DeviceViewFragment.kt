@@ -91,13 +91,10 @@ class DeviceViewFragment : Fragment(), OnActionClick {
                             holder.itemView.context
                         ), listOf(sample, sample, sample)
                     )
+                    euc.setWidthAll(UiUtils.dpToPx(120f, holder.itemView.resources).toInt())
                 }
 
                 (element as? EmberText)?.text = "123"
-
-                if (element is EmberEditText || element is EmberSelect) {
-                    (element as? EmberUiClass)?.setWidthAll(UiUtils.dpToPx(120f, holder.itemView.resources).toInt())
-                }
 
                 (holder.itemView as? ViewGroup)?.findViewById<LinearLayout>(R.id.layout)
                     ?.addView(element)

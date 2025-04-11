@@ -1,19 +1,15 @@
 package com.emberiot.emberiot.view
 
 import android.content.Context
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
-import android.os.Handler
-import android.os.Looper
 import android.util.TypedValue
 import androidx.core.content.ContextCompat
-import com.emberiot.emberiot.EmberIotApp
 import com.emberiot.emberiot.R
 import com.emberiot.emberiot.data.enum.EmberButtonStyle
 import com.emberiot.emberiot.data.enum.EmberButtonType
 import com.emberiot.emberiot.data.enum.EnumFromValue
-import com.emberiot.emberiot.data.enum.LabelSize
+import com.emberiot.emberiot.data.enum.ElementSize
 import com.emberiot.emberiot.data.enum.UiObjectParameter
 import com.emberiot.emberiot.util.UiUtils
 import com.google.android.material.button.MaterialButton
@@ -28,7 +24,7 @@ class EmberButton(context: Context) : MaterialButton(context), EmberUiClass {
     private var updateChannel: UpdateChannelFn? = null
     private var isToggled = false
     private var style: EmberButtonStyle = EmberButtonStyle.ROUND
-    private var size = LabelSize.SMALL
+    private var size = ElementSize.SMALL
     private var textOn = ""
     private var textOff = ""
     private var type = EmberButtonType.TOGGLE
@@ -40,9 +36,9 @@ class EmberButton(context: Context) : MaterialButton(context), EmberUiClass {
         type = EnumFromValue.fromValue(params[UiObjectParameter.BUTTON_TYPE.value], EmberButtonType::class.java) ?: EmberButtonType.TOGGLE
         style = EnumFromValue.fromValue(params[UiObjectParameter.STYLE.value], EmberButtonStyle::class.java) ?: EmberButtonStyle.ROUND
 
-        size = EnumFromValue.fromValue(params[UiObjectParameter.TEXT_SIZE.value], LabelSize::class.java) ?: LabelSize.SMALL
+        size = EnumFromValue.fromValue(params[UiObjectParameter.TEXT_SIZE.value], ElementSize::class.java) ?: ElementSize.SMALL
         EmberText.adjustSize(size, this)
-        iconSize = (size.size * 1.5).toInt()
+        iconSize = (size.fontSize * 1.5).toInt()
 
 //        params[ICON]?.let {
 //            EmberIotApp.iconPack?.getIcon(it.toInt())?.drawable?.let { d -> icon = d }
@@ -106,8 +102,8 @@ class EmberButton(context: Context) : MaterialButton(context), EmberUiClass {
                 val layoutParams = layoutParams
                 layoutParams.width = UiUtils.dpToPx(
                     when (size) {
-                        LabelSize.SMALL -> 82f
-                        LabelSize.MEDIUM -> 96f
+                        ElementSize.SMALL -> 82f
+                        ElementSize.MEDIUM -> 96f
                         else -> 110f
                     }, resources
                 ).toInt()

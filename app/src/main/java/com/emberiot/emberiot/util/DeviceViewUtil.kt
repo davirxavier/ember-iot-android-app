@@ -23,6 +23,7 @@ import com.emberiot.emberiot.view.DottedGridView
 import com.emberiot.emberiot.view.EmberButton
 import com.emberiot.emberiot.view.EmberEditText
 import com.emberiot.emberiot.view.EmberSelect
+import com.emberiot.emberiot.view.EmberSlider
 import com.emberiot.emberiot.view.EmberText
 import com.emberiot.emberiot.view.EmberUiClass
 import kotlin.math.abs
@@ -40,6 +41,7 @@ class DeviceViewUtil {
                 UiObjectType.TEXT -> EmberText(context)
                 UiObjectType.SELECT -> EmberSelect(context)
                 UiObjectType.EDIT_TEXT -> EmberEditText(context)
+                UiObjectType.SLIDER -> EmberSlider(context)
                 else -> null
             }
         }

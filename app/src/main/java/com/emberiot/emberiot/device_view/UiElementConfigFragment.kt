@@ -3,6 +3,7 @@ package com.emberiot.emberiot.device_view
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,7 +25,7 @@ import com.emberiot.emberiot.data.enum.EditTextType
 import com.emberiot.emberiot.data.enum.EmberButtonStyle
 import com.emberiot.emberiot.data.enum.EmberButtonType
 import com.emberiot.emberiot.data.enum.EnumFromValue
-import com.emberiot.emberiot.data.enum.LabelSize
+import com.emberiot.emberiot.data.enum.ElementSize
 import com.emberiot.emberiot.data.enum.LabelType
 import com.emberiot.emberiot.data.enum.UiObjectParameter
 import com.emberiot.emberiot.data.enum.UiObjectType
@@ -84,6 +85,9 @@ class UiElementConfigFragment : Fragment(), OnActionClick {
         R.id.unitContainer,
         R.id.editTypeContainer,
         R.id.hintContainer,
+        R.id.sliderFromContainer,
+        R.id.sliderToContainer,
+        R.id.sliderRangeContainer,
     )
 
     private val uiElementsByType = mapOf(
@@ -107,14 +111,21 @@ class UiElementConfigFragment : Fragment(), OnActionClick {
             R.id.sizeContainer,
             R.id.hintContainer,
             R.id.editTypeSelect
-        )
+        ),
+        UiObjectType.SLIDER to listOf(
+            R.id.sliderFromContainer,
+            R.id.sliderToContainer,
+            R.id.sliderRangeContainer,
+            R.id.unitContainer,
+            R.id.sizeContainer,
+        ),
     )
 
     private val enumsToUiElements by lazy {
         mapOf<EnumFromValue<String, *>, AppCompatAutoCompleteTextView>(
             EmberButtonStyle.entries.first() to binding.styleSelect,
             EmberButtonType.entries.first() to binding.typeSelect,
-            LabelSize.entries.first() to binding.sizeSelect,
+            ElementSize.entries.first() to binding.sizeSelect,
             LabelType.entries.first() to binding.labelTypeSelect,
             EditTextType.entries.first() to binding.editTypeSelect
         )
@@ -128,6 +139,9 @@ class UiElementConfigFragment : Fragment(), OnActionClick {
             UiObjectParameter.UNITS.value to binding.unitsInput,
             UiObjectParameter.PREFIX.value to binding.prefixInput,
             UiObjectParameter.HINT.value to binding.hintText,
+            UiObjectParameter.SLIDER_FROM.value to binding.sliderFromEdit,
+            UiObjectParameter.SLIDER_TO.value to binding.sliderToEdit,
+            UiObjectParameter.SLIDER_STEP_SIZE.value to binding.sliderRangeEdit,
         )
     }
 
@@ -311,8 +325,8 @@ class UiElementConfigFragment : Fragment(), OnActionClick {
                     return@setOnItemClickListener
                 }
 
-                currentEditing.parameters[entry.value] =
-                    enum.getValues()[position].getValueInternal()
+                currentEditing.parameters[entry.value] = enum.getValues()[position].getValueInternal()
+                Log.println(Log.ERROR, "", currentEditing.parameters.toString())
 
                 if (enum is LabelType) {
                     val selectedType = LabelType.entries[position]

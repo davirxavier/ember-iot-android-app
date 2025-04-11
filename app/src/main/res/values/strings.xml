@@ -170,4 +170,10 @@
     <string name="edit_type_number">Number</string>
     <string name="edit_type_date">Date</string>
     <string name="invalid_key">Invalid Firebase configuration, please submit valid info.</string>
+
+    <string name="slide_from">Start Value</string>
+    <string name="slide_to">End Value</string>
+    <string name="slide_step">Step Size</string>
+    <string name="slider">Slider</string>
+    <string name="slider_desc">Select a value within a range.</string>
 </resources>
