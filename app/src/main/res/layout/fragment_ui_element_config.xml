@@ -302,5 +302,53 @@
                 android:layout_height="wrap_content" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.textfield.TextInputLayout
+            app:boxStrokeColor="@color/md_theme_onBackground"
+            app:hintTextColor="@color/md_theme_onBackground"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:id="@+id/sliderFromContainer"
+            android:hint="@string/slide_from">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/sliderFromEdit"
+                android:inputType="numberDecimal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            app:boxStrokeColor="@color/md_theme_onBackground"
+            app:hintTextColor="@color/md_theme_onBackground"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:id="@+id/sliderToContainer"
+            android:hint="@string/slide_to">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/sliderToEdit"
+                android:inputType="numberDecimal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            app:boxStrokeColor="@color/md_theme_onBackground"
+            app:hintTextColor="@color/md_theme_onBackground"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:id="@+id/sliderRangeContainer"
+            android:hint="@string/slide_step">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/sliderRangeEdit"
+                android:inputType="numberDecimal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+
     </LinearLayout>
 </ScrollView>

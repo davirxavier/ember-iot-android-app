@@ -113,7 +113,7 @@ class NewDeviceFragment : Fragment(), OnActionClick {
         updatePosition: Int = -1
     ) {
         val newProp = DevicePropertyDefinition(
-            DevicePropertyDefinition.getId(currentDevice.propertyDefinitions.size),
+            currentDevice.getNextPropDefId(),
             name,
             type,
             possibleValues
@@ -139,7 +139,6 @@ class NewDeviceFragment : Fragment(), OnActionClick {
         }
 
         currentDevice.name = binding.editDeviceName.text.toString()
-        currentDevice.iconId = selectedIcon?.id ?: 0
 
         viewLifecycleOwner.lifecycleScope.launch {
             deviceViewModel.addOrUpdateDevice(currentDevice)
@@ -149,8 +148,8 @@ class NewDeviceFragment : Fragment(), OnActionClick {
         }
     }
 
-    private fun onRemoveChannel(index: Int) {
-        currentDevice.propertyDefinitions.remove(DevicePropertyDefinition.getId(index))
+    private fun onRemoveChannel(key: String) {
+        currentDevice.propertyDefinitions.remove(key)
     }
 
     private fun openChannelDialog(prop: DevicePropertyDefinition? = null, index: Int = -1) {
@@ -265,6 +264,7 @@ class NewDeviceFragment : Fragment(), OnActionClick {
         icons.firstOrNull()?.let {
             binding.btnSelectIcon.icon = it.drawable
             selectedIcon = it
+            currentDevice.iconId = it.id
         }
     }
 

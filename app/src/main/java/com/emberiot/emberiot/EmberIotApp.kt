@@ -3,10 +3,13 @@ package com.emberiot.emberiot
 import android.app.Application
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
+import com.emberiot.emberiot.data.UserData
 import com.emberiot.emberiot.view_model.LoginViewModel
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
@@ -49,10 +52,10 @@ class EmberIotApp : Application() {
         var encryptedSharedPreferences: SharedPreferences? = null
             private set
 
-        var initCallback: (() -> Unit)? = null
+        private val _firebaseInit = MutableLiveData(false)
+        val firebaseInit: LiveData<Boolean> get() = _firebaseInit
 
         lateinit var app: EmberIotApp
-        var firebaseInit = false
 
         enum class PreferenceKey {
             APPID,
@@ -77,7 +80,7 @@ class EmberIotApp : Application() {
         }
 
         fun initFirebase(context: ViewModelStoreOwner): Boolean {
-            if (firebaseInit) {
+            if (firebaseInit.value == true) {
                 return true
             }
 
@@ -91,11 +94,11 @@ class EmberIotApp : Application() {
                     .setApiKey(apiKey)
                     .setDatabaseUrl(dbUrl)
                     .build())
-                firebaseInit = true
+
+                _firebaseInit.value = true
 
                 val loginViewModel = ViewModelProvider(context)[LoginViewModel::class.java]
                 loginViewModel.checkIsLogged()
-                initCallback?.invoke()
                 return true
             } else {
                 return false
@@ -103,11 +106,11 @@ class EmberIotApp : Application() {
         }
 
         fun deinitFirebase() {
-            if (!firebaseInit) {
+            if (firebaseInit.value == false) {
                 return
             }
 
-            firebaseInit = false
+            _firebaseInit.value = false
             encryptedSharedPreferences!!.edit { clear() }
             FirebaseApp.getInstance().delete()
         }

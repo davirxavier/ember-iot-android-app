@@ -28,6 +28,7 @@ enum class UiObjectType(
         PropertyType.DOUBLE
     ),
     SELECT(R.string.ui_element_select_name, R.string.ui_element_select_desc, PropertyType.ENUM),
+    SLIDER(R.string.slider, R.string.slider_desc, PropertyType.INT, PropertyType.DOUBLE),
 
     INVALID(R.string.ui_element_text_name, R.string.ui_element_text_desc);
 }

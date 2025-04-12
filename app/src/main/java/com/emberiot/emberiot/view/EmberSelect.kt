@@ -3,16 +3,13 @@ package com.emberiot.emberiot.view
 import android.content.Context
 import android.content.res.ColorStateList
 import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.FrameLayout
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import com.emberiot.emberiot.R
 import com.emberiot.emberiot.data.enum.EnumFromValue
-import com.emberiot.emberiot.data.enum.LabelSize
+import com.emberiot.emberiot.data.enum.ElementSize
 import com.emberiot.emberiot.data.enum.UiObjectParameter
 import com.emberiot.emberiot.util.UiUtils
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -53,12 +50,8 @@ class EmberSelect(context: Context) : FrameLayout(context), EmberUiClass {
             ?.let { onChannelUpdate(it) }
 
         params[UiObjectParameter.TEXT_SIZE.value]?.let {
-            val enum = EnumFromValue.fromValue(it, LabelSize::class.java) ?: LabelSize.SMALL
-            setWidthAll(UiUtils.dpToPx(when (enum) {
-                LabelSize.SMALL -> 150f
-                LabelSize.MEDIUM -> 220f
-                LabelSize.LARGE -> 320f
-            }, resources).toInt())
+            val enum = EnumFromValue.fromValue(it, ElementSize::class.java) ?: ElementSize.SMALL
+            setWidthAll(UiUtils.dpToPx(enum.width, resources).toInt())
         }
 
         possibleValues?.let {

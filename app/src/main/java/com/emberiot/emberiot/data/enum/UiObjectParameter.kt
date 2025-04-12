@@ -16,14 +16,15 @@ enum class UiObjectParameter(
     TEXT_SIZE(
         "s",
         R.string.size,
-        LabelSize.entries.first(),
-        LabelSize.SMALL.value,
+        ElementSize.entries.first(),
+        ElementSize.SMALL.value,
         null,
         UiObjectType.TEXT,
         UiObjectType.BUTTON,
         UiObjectType.SELECT,
+        UiObjectType.SLIDER,
     ),
-    UNITS("u", R.string.unit, null, null, R.string.sample_unit, UiObjectType.TEXT),
+    UNITS("u", R.string.unit, null, null, R.string.sample_unit, UiObjectType.TEXT, UiObjectType.SLIDER),
     PREFIX("p", R.string.prefix, null, null, R.string.sample_prefix, UiObjectType.TEXT),
 
     BUTTON_TYPE(
@@ -69,6 +70,10 @@ enum class UiObjectParameter(
     ),
 
     EDIT_TYPE("et", R.string.type, EditTextType.entries.first(), null, null, UiObjectType.EDIT_TEXT),
+
+    SLIDER_FROM("sfv", R.string.slide_from, null, "0.0", null, UiObjectType.SLIDER),
+    SLIDER_TO("sft", R.string.slide_to, null, "100.0", null, UiObjectType.SLIDER),
+    SLIDER_STEP_SIZE("sfs", R.string.slide_step, null, "1.0", null, UiObjectType.SLIDER),
 
     INVALID("", R.string.sample, null, null, null, UiObjectType.INVALID);
 

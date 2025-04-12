@@ -13,7 +13,6 @@
         <action
             android:id="@+id/action_nav_login_to_nav_devices"
             app:destination="@id/nav_devices"
-            app:launchSingleTop="true"
             app:popUpTo="@id/nav_login"
             app:popUpToInclusive="true" />
     </fragment>
@@ -53,6 +52,11 @@
             app:popUpTo="@id/nav_settings"
             app:popUpToInclusive="true"
             app:destination="@id/nav_settings" />
+        <action
+            android:id="@+id/action_settings_to_login"
+            app:popUpTo="@id/nav_settings"
+            app:popUpToInclusive="true"
+            app:destination="@id/nav_login" />
     </fragment>
     <fragment
         android:id="@+id/newDeviceFragment"

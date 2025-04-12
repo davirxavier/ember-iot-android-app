@@ -15,7 +15,7 @@ import com.emberiot.emberiot.data.DevicePropertyDefinition
 import com.emberiot.emberiot.login.LoginFragment.Companion.Steps
 
 class DataChannelListAdapter(
-    private val removeItemCallback: (index: Int) -> Unit,
+    private val removeItemCallback: (key: String) -> Unit,
     private val onItemClickCallback: (item: DevicePropertyDefinition, index: Int) -> Unit
 ) : RecyclerView.Adapter<DataChannelListAdapter.Companion.ViewHolder>() {
 
@@ -58,7 +58,7 @@ class DataChannelListAdapter(
                         list.removeAt(position)
                         notifyItemRemoved(position)
                         notifyItemRangeChanged(position, list.size - position)
-                        removeItemCallback(position)
+                        removeItemCallback(item.id)
                         dialog.dismiss()
                     }
                 }

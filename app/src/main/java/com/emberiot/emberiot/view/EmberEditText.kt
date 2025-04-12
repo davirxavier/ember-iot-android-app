@@ -5,13 +5,12 @@ import android.os.Handler
 import android.os.Looper
 import android.view.MotionEvent
 import android.widget.FrameLayout
-import android.widget.LinearLayout
 import androidx.core.view.children
 import androidx.core.widget.addTextChangedListener
 import com.emberiot.emberiot.R
 import com.emberiot.emberiot.data.enum.EditTextType
 import com.emberiot.emberiot.data.enum.EnumFromValue
-import com.emberiot.emberiot.data.enum.LabelSize
+import com.emberiot.emberiot.data.enum.ElementSize
 import com.emberiot.emberiot.data.enum.UiObjectParameter
 import com.emberiot.emberiot.util.UiUtils
 import com.google.android.material.textfield.TextInputEditText
@@ -44,12 +43,8 @@ class EmberEditText(context: Context) : FrameLayout(context), EmberUiClass {
 
     override fun parseParams(params: Map<String, String>, possibleValues: List<String>?) {
         params[UiObjectParameter.TEXT_SIZE.value]?.let {
-            val enum = EnumFromValue.fromValue(it, LabelSize::class.java) ?: LabelSize.SMALL
-            setWidthAll(UiUtils.dpToPx(when (enum) {
-                LabelSize.SMALL -> 150f
-                LabelSize.MEDIUM -> 220f
-                LabelSize.LARGE -> 320f
-            }, resources).toInt())
+            val enum = EnumFromValue.fromValue(it, ElementSize::class.java) ?: ElementSize.SMALL
+            setWidthAll(UiUtils.dpToPx(enum.width, resources).toInt())
         }
 
         params[UiObjectParameter.HINT.value]?.let {
