@@ -152,9 +152,11 @@ class LoginFragment : Fragment(), OnPrevCallback {
         val appId = binding.appIdText.text.toString()
         val apiKey = binding.apiKeyText.text.toString()
         val dbUrl = binding.urlText.text.toString()
+        val gcmSenderId = binding.senderIdText.toString()
+        val projectId = binding.projectIdText.toString()
 
         if (appId.isNotBlank() && apiKey.isNotBlank() && dbUrl.isNotBlank()) {
-            EmberIotApp.setCreds(appId, apiKey, dbUrl)
+            EmberIotApp.setCreds(appId, apiKey, dbUrl, gcmSenderId, projectId)
             currentStep = Steps.PROGRESS
             updateStep()
         }
@@ -167,9 +169,11 @@ class LoginFragment : Fragment(), OnPrevCallback {
             val client = jsonObject.optJSONArray("client")?.optJSONObject(0)
             val appId = client?.optJSONObject("client_info")?.optString("mobilesdk_app_id")
             val apiKey = client?.optJSONArray("api_key")?.optJSONObject(0)?.optString("current_key")
+            val gcmSenderId = jsonObject.optJSONObject("project_info")?.optString("project_number")
+            val projectId = jsonObject.optJSONObject("project_info")?.optString("project_id")
 
             if (dbUrl != null && appId != null && apiKey != null) {
-                EmberIotApp.setCreds(appId, apiKey, dbUrl)
+                EmberIotApp.setCreds(appId, apiKey, dbUrl, gcmSenderId, projectId)
                 onNext()
             } else {
                 Toast.makeText(requireContext(), getString(R.string.login_incomplete_json), Toast.LENGTH_SHORT).show()

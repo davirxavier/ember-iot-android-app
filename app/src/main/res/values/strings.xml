@@ -64,6 +64,8 @@
     <string name="login_appid">Your Firebase APP ID</string>
     <string name="login_webapikey">Your Firebase WebAPI key</string>
     <string name="login_rtdb_url">Your Realtime Database URL</string>
+    <string name="login_gcm_sender_id">Your GCM Sender ID (for notifications)</string>
+    <string name="login_project_id">Your Firebase Project ID</string>
 
     <string name="login_email">Login Email</string>
     <string name="login_pass">Login Password</string>
@@ -176,4 +178,10 @@
     <string name="slide_step">Step Size</string>
     <string name="slider">Slider</string>
     <string name="slider_desc">Select a value within a range.</string>
+
+    <string name="cant_enable_notif_dialog">Your app is not configured with a Firebase Cloud Messaging ID. To enable notifications, please log out and reconfigure the app, ensuring this property is included.</string>
+    <string name="enable_notif_dialog">Enable notifications for this app to receive alerts from your devices.</string>
+    <string name="disable_notif_dialog">Disable notifications for this app to stop receiving alerts from your devices.</string>
+    <string name="goto_settings">Go to Settings</string>
+    <string name="close">Close</string>
 </resources>

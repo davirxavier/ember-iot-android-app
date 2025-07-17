@@ -1,6 +1,7 @@
 package com.emberiot.emberiot
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
@@ -21,8 +22,12 @@ import com.emberiot.emberiot.devices.NewDeviceFragment
 import com.emberiot.emberiot.util.OnActionClick
 import com.emberiot.emberiot.util.OnPrevCallback
 import com.emberiot.emberiot.util.UiUtils
+import com.emberiot.emberiot.util.Values
 import com.emberiot.emberiot.view_model.LoginViewModel
+import com.google.android.gms.tasks.Task
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.installations.FirebaseInstallations
+import com.google.firebase.messaging.FirebaseMessaging
 import com.maltaisn.icondialog.IconDialog
 import com.maltaisn.icondialog.data.Icon
 import com.maltaisn.icondialog.pack.IconPack
@@ -102,6 +107,25 @@ class MainActivity : AppCompatActivity(), IconDialog.Callback {
                 if (it != null) {
                     val emailText: TextView = navView.getHeaderView(0).findViewById(R.id.userEmail)
                     emailText.text = it.user.email
+
+                    if (EmberIotApp.hasCred(EmberIotApp.Companion.PreferenceKey.GCMSENDERID)) {
+                        EmberIotApp.getCurrentTopic()?.let { topic ->
+                            FirebaseMessaging.getInstance().unsubscribeFromTopic(topic)
+                        }
+
+                        FirebaseMessaging.getInstance().subscribeToTopic(it.user.uid)
+                            .addOnCompleteListener { task: Task<Void?> ->
+                                if (task.isSuccessful) {
+                                    Log.d("FCM", "Subscribed to topic")
+                                    EmberIotApp.setCurrentTopic(it.user.uid)
+                                } else {
+                                    Log.d("FCM", "Subscription failed")
+                                    if (task.exception != null) {
+                                        Log.e("FCM", task.exception!!.message!!)
+                                    }
+                                }
+                            }
+                    }
                 }
                 else {
 //                    navController.navigate(R.id.action_settings_to_login)

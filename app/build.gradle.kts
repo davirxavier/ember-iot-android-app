@@ -59,6 +59,7 @@ dependencies {
     implementation(libs.google.material)
     implementation(libs.icondialog)
     implementation(libs.iconpack.default)
+    implementation(libs.firebase.messaging)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

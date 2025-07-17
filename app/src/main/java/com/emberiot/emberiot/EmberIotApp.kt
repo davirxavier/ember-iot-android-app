@@ -2,6 +2,7 @@ package com.emberiot.emberiot
 
 import android.app.Application
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.core.content.edit
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,13 +10,16 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
-import com.emberiot.emberiot.data.UserData
+import com.emberiot.emberiot.util.Values
 import com.emberiot.emberiot.view_model.LoginViewModel
+import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
+import com.google.firebase.messaging.FirebaseMessaging
 import com.maltaisn.icondialog.pack.IconPack
 import com.maltaisn.icondialog.pack.IconPackLoader
 import com.maltaisn.iconpack.defaultpack.createDefaultIconPack
+
 
 class EmberIotApp : Application() {
 
@@ -61,22 +65,46 @@ class EmberIotApp : Application() {
             APPID,
             APIKEY,
             DBURL,
+            GCMSENDERID,
+            PROJECTID,
+            TOPIC,
+        }
+
+        fun hasCred(key: PreferenceKey): Boolean {
+            return !encryptedSharedPreferences!!.getString(key.name, null).isNullOrBlank()
         }
 
         fun hasCreds(): Boolean {
             val appId = encryptedSharedPreferences!!.getString(PreferenceKey.APPID.name, null)
             val apiKey = encryptedSharedPreferences!!.getString(PreferenceKey.APIKEY.name, null)
             val dbUrl = encryptedSharedPreferences!!.getString(PreferenceKey.DBURL.name, null)
-            return !appId.isNullOrBlank() && !apiKey.isNullOrBlank() && !dbUrl.isNullOrBlank()
+            val projectId = encryptedSharedPreferences!!.getString(PreferenceKey.PROJECTID.name, null)
+            return !appId.isNullOrBlank() &&
+                    !apiKey.isNullOrBlank() &&
+                    !dbUrl.isNullOrBlank() &&
+                    !projectId.isNullOrBlank()
         }
 
-        fun setCreds(appId: String?, apiKey: String?, dbUrl: String?) {
+        fun setCreds(appId: String?, apiKey: String?, dbUrl: String?, gcmSenderId: String?, projectId: String?) {
             encryptedSharedPreferences!!.edit().let {
                 it.putString(PreferenceKey.APPID.name, appId);
                 it.putString(PreferenceKey.APIKEY.name, apiKey);
                 it.putString(PreferenceKey.DBURL.name, dbUrl);
+                it.putString(PreferenceKey.GCMSENDERID.name, gcmSenderId)
+                it.putString(PreferenceKey.PROJECTID.name, projectId)
                 it.apply()
             }
+        }
+
+        fun setCurrentTopic(topic: String) {
+            encryptedSharedPreferences!!.edit().let {
+                it.putString(PreferenceKey.TOPIC.name, topic)
+                it.apply()
+            }
+        }
+
+        fun getCurrentTopic(): String? {
+            return encryptedSharedPreferences!!.getString(PreferenceKey.TOPIC.name, null)
         }
 
         fun initFirebase(context: ViewModelStoreOwner): Boolean {
@@ -87,12 +115,16 @@ class EmberIotApp : Application() {
             val appId = encryptedSharedPreferences!!.getString(PreferenceKey.APPID.name, null)
             val apiKey = encryptedSharedPreferences!!.getString(PreferenceKey.APIKEY.name, null)
             val dbUrl = encryptedSharedPreferences!!.getString(PreferenceKey.DBURL.name, null)
+            val gcmSenderId = encryptedSharedPreferences!!.getString(PreferenceKey.GCMSENDERID.name, null)
+            val projectId = encryptedSharedPreferences!!.getString(PreferenceKey.PROJECTID.name, null)
 
             if (appId != null && apiKey != null && dbUrl != null) {
                 FirebaseApp.initializeApp(app, FirebaseOptions.Builder()
                     .setApplicationId(appId)
                     .setApiKey(apiKey)
                     .setDatabaseUrl(dbUrl)
+                    .setGcmSenderId(gcmSenderId)
+                    .setProjectId(projectId)
                     .build())
 
                 _firebaseInit.value = true
