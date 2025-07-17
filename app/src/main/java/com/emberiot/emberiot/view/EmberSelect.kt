@@ -32,14 +32,6 @@ class EmberSelect(context: Context) : FrameLayout(context), EmberUiClass {
         layout.hintTextColor =
             ColorStateList.valueOf(ContextCompat.getColor(context, R.color.md_theme_onBackground))
 
-        autoCompleteTextView.setOnItemClickListener { _, _, position, _ ->
-            if (position < 0) {
-                return@setOnItemClickListener
-            }
-
-            updateFn?.invoke(position.toString())
-        }
-
         autoCompleteTextView.isFocusable = false
     }
 
@@ -56,6 +48,19 @@ class EmberSelect(context: Context) : FrameLayout(context), EmberUiClass {
 
         possibleValues?.let {
             autoCompleteTextView.setAdapter(ArrayAdapter(context, R.layout.simple_list_item, it))
+        }
+
+        if (params[UiObjectParameter.READ_ONLY.value]?.let { it == UiObjectParameter.READ_ONLY_TRUE } == true) {
+            touchDisabled = true
+            return
+        }
+
+        autoCompleteTextView.setOnItemClickListener { _, _, position, _ ->
+            if (position < 0) {
+                return@setOnItemClickListener
+            }
+
+            updateFn?.invoke(position.toString())
         }
     }
 

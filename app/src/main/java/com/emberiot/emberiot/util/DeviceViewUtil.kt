@@ -331,8 +331,11 @@ class DeviceViewUtil {
             if (obj is EmberUiClass) {
                 o.propDef?.id?.let {
                     device.properties[it]?.let { it1 -> obj.onChannelUpdate(it1) }
-                    obj.setOnChannelChangeListener { newVal ->
-                        updateChannelFn(it, newVal)
+
+                    if (!editMode) {
+                        obj.setOnChannelChangeListener { newVal ->
+                            updateChannelFn(it, newVal)
+                        }
                     }
                 }
 

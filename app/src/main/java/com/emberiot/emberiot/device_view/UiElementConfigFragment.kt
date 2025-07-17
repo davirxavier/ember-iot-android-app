@@ -88,6 +88,7 @@ class UiElementConfigFragment : Fragment(), OnActionClick {
         R.id.sliderFromContainer,
         R.id.sliderToContainer,
         R.id.sliderRangeContainer,
+        R.id.readOnlySwitch,
     )
 
     private val uiElementsByType = mapOf(
@@ -96,21 +97,24 @@ class UiElementConfigFragment : Fragment(), OnActionClick {
             R.id.textOffContainer,
             R.id.textOnContainer,
             R.id.typeContainer,
-            R.id.styleContainer
+            R.id.styleContainer,
+            R.id.readOnlySwitch
         ),
         UiObjectType.TEXT to listOf(
             R.id.sizeContainer,
             R.id.prefixContainer,
-            R.id.unitContainer
+            R.id.unitContainer,
         ),
         UiObjectType.SELECT to listOf(
             R.id.sizeContainer,
             R.id.hintContainer,
+            R.id.readOnlySwitch
         ),
         UiObjectType.EDIT_TEXT to listOf(
             R.id.sizeContainer,
             R.id.hintContainer,
-            R.id.editTypeSelect
+            R.id.editTypeSelect,
+            R.id.readOnlySwitch
         ),
         UiObjectType.SLIDER to listOf(
             R.id.sliderFromContainer,
@@ -118,6 +122,7 @@ class UiElementConfigFragment : Fragment(), OnActionClick {
             R.id.sliderRangeContainer,
             R.id.unitContainer,
             R.id.sizeContainer,
+            R.id.readOnlySwitch
         ),
     )
 
@@ -300,6 +305,14 @@ class UiElementConfigFragment : Fragment(), OnActionClick {
     }
 
     private fun prepareAllParams() {
+        binding.readOnlySwitch.isChecked = currentEditing.parameters[UiObjectParameter.READ_ONLY.value]
+            ?.let { it == UiObjectParameter.READ_ONLY_TRUE } ?: false
+
+        binding.readOnlySwitch.setOnCheckedChangeListener { _, isChecked ->
+            currentEditing.parameters[UiObjectParameter.READ_ONLY.value] =
+                if (isChecked) UiObjectParameter.READ_ONLY_TRUE else UiObjectParameter.READ_ONLY_FALSE
+        }
+
         fieldParamsToElements.forEach { entry ->
             entry.value.text = currentEditing.parameters[entry.key] ?: ""
             entry.value.addTextChangedListener {

@@ -28,17 +28,6 @@ class EmberEditText(context: Context) : FrameLayout(context), EmberUiClass {
         inflate(context, R.layout.view_input_layout_text_wrapper, this)
         layout = findViewById(R.id.textInputLayout)
         input = findViewById(R.id.input)
-
-        input.addTextChangedListener {
-            if (!input.hasFocus()) {
-                return@addTextChangedListener
-            }
-
-            handler.postDelayed({
-                handler.removeCallbacksAndMessages(null)
-                updateFn?.invoke(input.text.toString())
-            }, 1000)
-        }
     }
 
     override fun parseParams(params: Map<String, String>, possibleValues: List<String>?) {
@@ -58,6 +47,22 @@ class EmberEditText(context: Context) : FrameLayout(context), EmberUiClass {
             )
         }?.let {
             input.inputType = it.type
+        }
+
+        if (params[UiObjectParameter.READ_ONLY.value]?.let { it == UiObjectParameter.READ_ONLY_TRUE } == true) {
+            touchDisabled = true
+            return
+        }
+
+        input.addTextChangedListener {
+            if (!input.hasFocus()) {
+                return@addTextChangedListener
+            }
+
+            handler.postDelayed({
+                handler.removeCallbacksAndMessages(null)
+                updateFn?.invoke(input.text.toString())
+            }, 1000)
         }
     }
 

@@ -51,6 +51,11 @@ class EmberButton(context: Context) : MaterialButton(context), EmberUiClass {
 //        }
 
         updateStyle()
+
+        if (params[UiObjectParameter.READ_ONLY.value]?.let { it == UiObjectParameter.READ_ONLY_TRUE } == true) {
+            return
+        }
+
         setOnClickListener {
             if (type == EmberButtonType.PUSH) {
                 if (pushStarted) {

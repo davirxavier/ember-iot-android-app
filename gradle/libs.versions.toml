@@ -23,6 +23,7 @@ preference = "1.2.1"
 materialVersion = "1.12.0"
 icondialog = "3.3.0"
 iconpackDefault = "1.1.0"
+firebaseMessaging = "24.1.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -47,6 +48,7 @@ androidx-preference = { group = "androidx.preference", name = "preference", vers
 google-material = { group = "com.google.android.material", name = "material", version.ref = "materialVersion" }
 icondialog = { group = "com.maltaisn", name = "icondialog", version.ref = "icondialog" }
 iconpack-default = { group = "com.maltaisn", name = "iconpack-default", version.ref = "iconpackDefault" }
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging", version.ref = "firebaseMessaging" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

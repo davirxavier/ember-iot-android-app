@@ -75,6 +75,8 @@ enum class UiObjectParameter(
     SLIDER_TO("sft", R.string.slide_to, null, "100.0", null, UiObjectType.SLIDER),
     SLIDER_STEP_SIZE("sfs", R.string.slide_step, null, "1.0", null, UiObjectType.SLIDER),
 
+    READ_ONLY("ro", R.string.read_only, null, "f", null, *UiObjectType.entries.toTypedArray()),
+
     INVALID("", R.string.sample, null, null, null, UiObjectType.INVALID);
 
     override fun getValueInternal(): String {
@@ -94,6 +96,9 @@ enum class UiObjectParameter(
     }
 
     companion object {
+        const val READ_ONLY_TRUE: String = "t"
+        const val READ_ONLY_FALSE: String = "f"
+
         fun getByType(type: UiObjectType): List<UiObjectParameter> {
             return entries.filter { it.objectType.contains(type) }
         }
